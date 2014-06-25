@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>ScrollerJS Snap (soft)</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+
+        <link href="assets/styles.css" rel="stylesheet" type="text/css">
+        <link href="assets/icons.css" rel="stylesheet" type="text/css">
+
+        <!-- Scroller Styles -->
+        <link href="../../src/scroller.css" rel="stylesheet" type="text/css">
+
+        <!--  Scroller Core Utils -->
+        <script defer src="../../src/utils/bootstrap.js"></script>
+        <script defer src="../../src/utils/browser-support.js"></script>
+        <script defer src="../../src/utils/browser-styles.js"></script>
+        <script defer src="../../src/utils/helpers.js"></script>
+        <script defer src="../../src/utils/raf.js"></script>
+        <script defer src="../../src/utils/class-list.js"></script>
+        <script defer src="../../src/utils/cubic-bezier.js"></script>
+
+        <!--  Scroller Core Utils -->
+        <script defer src="../../src/surface-manager.js"></script>
+        <script defer src="../../src/scroller.js"></script>
+
+        <script defer src="../../src/plugins/snap-plugin.js"></script>
+        <script defer src="../../src/plugins/endless-plugin.js"></script>
+
+        <!-- Style Overrides -->
+        <style>
+            #container {
+                position: absolute;
+                z-index: 1;
+                top: 45px;
+                bottom: 30px;
+                left: 0;
+                width: 100%;
+                background: #ccc;
+
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -moz-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                -moz-box-align: center;
+                -ms-flex-align: center;
+                align-items: center;
+                -webkit-box-pack: center;
+                -webkit-justify-content: center;
+                -moz-box-pack: center;
+                -ms-flex-pack: center;
+                justify-content: center;
+            }
+            .sg-phone--header {
+                /* for accesibility */
+                /*position: relative;
+                z-index:2;*/
+            }
+
+            .scroller {}
+
+
+            /* ITEMS */
+            .footer {
+                width: 100%;
+                height: 30px;
+                line-height: 30px;
+                position: absolute;
+                bottom: 0;
+                background-color: #293f54;
+            }
+            /* Scroller customize */
+
+            .scroller-wrapper-custom {
+                width: 310px;
+                height: 310px;
+                border: 1px dashed black;
+                background-color: #f0f1f2;
+                padding-top: 14px;
+            }
+            .scroll-vertical article.mam {
+
+            }
+            article.mam {
+                height: 280px;
+                width: 280px;
+            }
+
+            .scroll-horizontal article.mam {
+                position: relative;
+                white-space: normal;
+                height: -webkit-calc(100% - 30px);
+                height: -moz-calc(100% - 30px);
+                height: -ms-calc(100% - 30px);
+                height: calc(100% - 30px);
+                display: inline-block;
+            }
+            .scroll-horizontal footer.mbm {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+            }
+
+        </style>
+    </head>    
+<body>
+<!-- ============================ HEADER =========================== -->
+
+<section class="sg-phone--header ht-44 clear">
+        <header class="bg-global-header ht-44 dropglow-1" role="group">
+            <ul class="fl man pan list-horizontal ht-44">
+                <li class="pos-rel fl ht-44">
+                    <a href="javascript:void(0)" title="Main Page" class="phm ht-44 pam">
+                        <span class="active--icon-1 text-color-5 icon-utility-rows"></span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="fr man pan list-horizontal ht-44">
+                 <li class="pos-rel fl ht-44">
+                    <a id="up" href="javascript:void(0)" title="Open in a new window" style="display:none" class="phm ht-44 pam">
+                        <span class="icon-utility-up active--icon-1 text-color-5">
+                        </span>
+                    </a>
+                 </li>
+                 <script>
+                    (function (w) {
+                        var open = document.getElementById('up');
+                        function inIframe () {try {return window.self !== window.top;} catch (e) {return true;}}
+                        if (inIframe()) {
+                            open.style.display = 'block';
+                            open.addEventListener('click', function (e) {
+                                window.open(window.location, '_blank');
+                            }, false);
+                        }
+                    }(window));
+
+                 </script>
+                 
+                 <li class="pos-rel fl ht-44">
+                    <a id="s-config" href="javascript:void(0)" title="Configuration" class="phm ht-44 pam">
+                        <span class="icon-utility-question active--icon-1 text-color-5">
+                        </span>
+                    </a>
+                 </li>
+            </ul>
+        </header>
+        <aside id="config-popup" class="modal-popup">
+            <div class="popup mam bg-1 brm border border--3">
+                <h5 class="bg-3 pam mbm">Scroller Configuration</h5>
+                <div class="mam">
+                    <pre class="cfg">
+                    </pre>
+                </div>
+            </div>
+        </aside>
+        <script>
+            (function (w) {
+                var help   = document.getElementById('s-config'),
+                    popup  = document.getElementById('config-popup'),
+                    close  = true,
+                    render = false,
+                    hide   = function (e) {
+                        e.preventDefault();
+                        if (!close) {
+                            popup.style.display = 'none';
+                            close = true;
+                        }
+                    },
+                    show   = function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (!render) {
+                            popup.querySelector('.cfg').innerHTML = JSON.stringify(window.scrollerConfig, null, '  ');
+                            render = true;
+                        }
+                        popup.style.display = 'block';
+                        close = false;
+                    };
+
+                popup.addEventListener('click', hide, false);
+                popup.addEventListener('pointerUp', hide, false);
+                popup.addEventListener('touchend', hide, false);
+
+                help.addEventListener('click', show, false);
+                help.addEventListener('pointerUp', show, false);
+                help.addEventListener('touchend', show, false);
+
+            }(window));
+        </script>
+    </section>
+
+<!-- ============================ SCROLLER ======================== -->
+
+<section id="container">
+<div class="scroller-wrapper-custom scroller-wrapper">
+    <div class="scroller">
+        <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item01
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item01
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item02
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item02
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item03
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item03
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item04
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item04
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item05
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item05
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item06
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item06
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item07
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item07
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item08
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item08
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item09
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item09
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item10
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item10
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item11
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item11
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+             <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item12
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item12
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item13
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item13
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item14
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item14
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item15
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item15
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item16
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item16
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+            <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item17
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item17
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+             <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item18
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item18
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+               <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item19
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item19
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>
+               <article class="mam bg-1 brm border border--3">
+                <div class="flag pam">
+                    <div class="flag--image prm">
+                        <img src="assets/45.jpeg" alt="kitten" class="brm">
+                    </div>
+                    <div class="flag--body">
+                        <a href="javascript:void(0)" name="actor" title="Jenny Hancock" class="fw-semibold f3 db">
+                            Item20
+                        </a>
+                        <time class="db f6 text-color-2">
+                            3 minutes ago
+                        </time>
+                    </div>
+                </div>
+                <p class="phm mtn fw-normal f4 text-color-1">
+                    Item20
+                </p>
+                <div ng-transclude="">
+                </div>
+                <footer class="clear phm ptm mbm border-top border--3">
+                    <a href="javascript:void(0)" class="f5 fl">
+                        <span class="dib mrs icon-utility-like f4"></span>
+                        Liked
+                    </a>
+                    <span class="f5 fr mlm">
+                        1 like
+                    </span>
+                    <span class="f5 fr">
+                        2 comments
+                    </span>
+                </footer>
+            </article>    
+        </div>
+    </div>
+</section>
+
+<!-- ============================ FOOTER =========================== -->
+
+<section class="footer">ScrollerJS - Snap</section>
+
+<!-- ============================ INITIALIZE ======================= -->
+        <script>
+            document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+
+            window.addEventListener('load', function (e) {
+                window.scrollerConfig = {
+                    itemSelector     : 'article.mam',
+                    disableMouse     : false,
+                    useCSSTransition : false,
+                    gpuOptimization  : true,
+                    infiniteLoading  : false,
+                    //hints
+                    //itemHeight       : 310,
+                    //itemWidth        : 320
+                    snap             : 'soft',
+                    pullToRefresh    : false,
+                    pullToLoadMore   : false,
+                    scroll           : 'horizontal',
+                    plugins          : ['Endless', 'Snap']
+                };
+                window.s = window.scroller = 
+                new Scroller('.scroller-wrapper', scrollerConfig);
+            });
+        </script>
+    </body>
+</html>

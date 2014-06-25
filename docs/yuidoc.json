@@ -1,0 +1,10 @@
+{
+    "name": "ScrollerJS",
+    "description": "Scrolling the web!",
+    "version": "1.0.0",
+    "url": "http://scrollerjs.com/",
+    "ignorePaths": ["build"], 
+    "options": {
+        "outdir": "docs/apidocs/"
+    }
+}

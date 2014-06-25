@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1">
+        <title>pull-to-refresh</title>
+        <style>
+          .scroller {
+              position: relative;
+              height: 200px;
+              width:100%;
+              border: 1px dashed black;
+              overflow: auto;
+              -webkit-overflow-scrolling: touch;
+          }
+
+          .wrapper {
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              overflow: auto;
+          }
+
+          .content {
+              -webkit-transform: translate3d(0,0,0);
+          }
+
+          .ptr {
+            position: absolute;
+            width: 100%;
+            top: -60px;/*height:*/
+            height: 60px;/*height:*/
+            text-align: center;
+            line-height: 60px;/*height:*/
+          }
+          
+          .lm {
+            position: absolute;
+            width: 100%;
+            bottom: -60px;/*height:*/
+            height: 60px;/*height:*/
+            text-align: center;
+            line-height: 60px;/*height:*/ 
+          }
+
+          .list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .list li {
+            padding: 5px;
+            line-height: 30px;
+            background: blue;
+            border-bottom: 1px solid black;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="scroller">
+            <div class="wrapper">
+                <div class="content">
+                    <div class="ptr"> pull to refresh</div>
+                    <ul class="list">
+                      <li>List item 01</li>
+                      <li>List item 02</li>
+                      <li>List item 03</li>
+                      <li>List item 04</li>
+                      <li>List item 05</li>
+                      <li>List item 06</li>
+                    </ul>
+                    <div class="lm">pull to load more</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

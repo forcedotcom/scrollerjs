@@ -1,0 +1,40 @@
+{
+  "name": "Scroller",
+  "description": "ScrollerJS",
+  "version": "0.0.1",
+  "homepage": "http://scrollerjs.com",
+  "author": "Diego Ferreiro <elfogris@gmail.com>",
+  "contributors": [
+    "Nihar Dandekar <ndandekar@salesforce.com>"
+  ],
+  "keywords": [
+    "scrolling",
+    "scroller",
+    "performance",
+    "60fps",
+    "infinite",
+    "pulltorefresh",
+    "snap",
+    "carousel",
+    "iphone",
+    "android",
+    "mobile",
+    "desktop",
+    "firefoxOS"
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-concat" : "~0.3.0",
+    "grunt-contrib-uglify" : "~0.3.2",
+    "grunt-contrib-clean"  : "~0.5.0",
+    "yuidocjs"             : "0.3.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forcedotcom/scrollerjs"
+  },
+  "bugs": {
+    "url": "https://github.com/forcedotcom/scrollerjs/issues"
+  },
+  "license": "Apache2.0"
+}

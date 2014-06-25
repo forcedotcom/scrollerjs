@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Simple event demo</title>
+<style>
+    #target {
+  background-color: red;
+  width: 150px;
+  height: 150px;
+  border-radius: 5px;
+}
+
+#log {
+  border: 1px solid black;
+  overflow-y: scroll;
+  max-width: 300px;
+  height: 200px;
+  font-size: large;
+}
+</style>
+</head>
+<body>
+  <div id="target"></div>
+  <pre id="log"></pre>
+  <button id="clearBtn">Clear Textarea Contents</button>
+  <script>
+    var last;
+        function handler(e) {
+          if (last && Date.now()-last > 1000)
+            log.textContent = '';
+          last = Date.now();
+          log.textContent += e.type + '\n';  
+          log.scrollTop = log.scrollHeight;
+        }
+        
+    var events = ['touchstart', 'touchmove', 'touchend', 'touchcancel', 'mouseout', 'mousemove', 'mousedown', 'mouseup', 'click'];
+
+for(var i = 0; i < events.length; i++)
+ target.addEventListener(events[i], handler);
+
+document.querySelector('#clearBtn').addEventListener('click', function (e) {
+  log.innerHTML = '';
+});
+  </script>
+</body>
+</html>

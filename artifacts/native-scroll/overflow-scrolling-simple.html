@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>overflow-scrolling-simple</title>
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1">
+    <style>
+    *, *:before, *:after {-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;}
+        .container {
+            margin: 5px;
+            height: 200px;
+            overflow: auto;
+            border: 1px dashed black;
+        }
+
+        .scroll {
+            -webkit-overflow-scrolling: touch;
+        }
+        .list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .list li {
+            width: 100%;
+            padding: 5px;
+            line-height: 30px;
+            background: blue;
+            border-bottom: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div id="c1" class="container">
+       <div class="wrapper">
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dignissim convallis urna sit amet convallis. Suspendisse fermentum lacinia mollis. Vestibulum ac enim libero. Phasellus in eros eros. Donec vehicula massa sem, nec lacinia quam scelerisque ut. Nulla tincidunt, purus eu facilisis cursus, sem enim iaculis justo, et venenatis lorem tellus vitae neque. Nunc sit amet mi justo. Nulla rhoncus ultrices pretium. Mauris ultricies turpis augue, vitae placerat mauris mollis ac. Vivamus sed posuere sapien, pellentesque ullamcorper eros.</p>
+
+    <p>Etiam velit metus, pretium nec semper eget, interdum sit amet lectus. Etiam posuere ornare ullamcorper. Etiam at nulla pulvinar, egestas leo a, mattis orci. Ut vestibulum nunc eget arcu mollis, ut dignissim nulla viverra. Curabitur suscipit urna et dignissim dignissim. Quisque vel dolor mi. Suspendisse sit amet pellentesque velit. Cras nec massa eu purus pharetra sodales ac at metus. Donec laoreet, dui eget pretium fermentum, est augue posuere elit, ut mattis neque neque eget lorem.</p>
+
+    <p>Etiam accumsan orci a rutrum posuere. Quisque molestie convallis justo. Nulla fermentum eget ipsum in hendrerit. Vivamus facilisis in eros ac dapibus. Suspendisse cursus, leo eu luctus aliquet, purus sapien tempus velit, vitae pellentesque sem metus ac augue. Sed vitae libero lectus. Donec et arcu eu mauris molestie condimentum lacinia sit amet arcu.</p>
+
+    <p>Fusce semper nisi eget tellus congue pharetra. Donec varius ligula eget erat fringilla, sed vestibulum magna sodales. Pellentesque ornare nibh non eros laoreet, id consectetur tortor aliquet. Duis non felis sit amet urna vestibulum dapibus. Curabitur ac tellus nisl. Etiam tristique suscipit purus, sed sollicitudin metus suscipit in. Quisque porta eu arcu a pretium. Morbi non purus sed magna condimentum pulvinar. In non dolor varius, lacinia eros ac, ultrices velit. Ut at nisi laoreet, condimentum nibh feugiat, feugiat dui. Morbi varius urna ac lorem rutrum cursus. Curabitur ornare, augue a fermentum lobortis, magna magna volutpat velit, quis rutrum dui enim ut purus. Etiam rhoncus erat tristique malesuada euismod. In mollis ligula ut ipsum faucibus mollis.
+    </p>
+        </div> 
+    </div>
+
+    <div id="c2" class="container scroll">
+        <ul class="list">
+            <li class="item">1</li>
+            <li class="item">2</li>
+            <li class="item">3</li>
+            <li class="item">4</li>
+            <li class="item">5</li>
+            <li class="item">6</li>
+            <li class="item">7</li>
+            <li class="item">8</li>
+            <li class="item">9</li>
+            <li class="item">10</li>
+             <li class="item">1</li>
+            <li class="item">2</li>
+            <li class="item">3</li>
+            <li class="item">4</li>
+            <li class="item">5</li>
+            <li class="item">6</li>
+            <li class="item">7</li>
+            <li class="item">8</li>
+            <li class="item">9</li>
+            <li class="item">10</li>
+            <li class="item">1</li>
+            <li class="item">2</li>
+            <li class="item">3</li>
+            <li class="item">4</li>
+            <li class="item">5</li>
+            <li class="item">6</li>
+            <li class="item">7</li>
+            <li class="item">8</li>
+            <li class="item">9</li>
+            <li class="item">10</li>
+        </ul>
+    </div>
+    <script>document.getElementById('c1').addEventListener('touchmove', 
+        function(e) {
+            //e.preventDefault();
+        }, false);
+    </script>
+</body>
+</html>
