@@ -89,6 +89,22 @@
         SCROLL_HORIZONTAL = 'horizontal',
 
         /**
+        * Configuration object for the MutatorObserver
+        *
+        * @property MUTATOR_OBSERVER_CONFIG
+        * @type Object
+        * @static
+        * @final
+        */
+        MUTATOR_OBSERVER_CONFIG = {
+            subtree    : true, 
+            childList  : true, 
+            attributes : false
+            // NOTE: if using attributeFilter
+            // Avoid listen for "style" attribute changes
+        },
+
+        /**
         * Default configuration for the scroller.
         * This option can be modified at the static level
         * or on a per instance basis.
@@ -114,7 +130,9 @@
             scrollbars            : false,
             infiniteLoading       : false,
             gpuOptimization       : false,
-            debounce              : true
+            debounce              : true,
+            observeDomChanges     : true,
+            observeDomConfig      : MUTATOR_OBSERVER_CONFIG
         },
 
         /**
@@ -290,6 +308,37 @@
                     this.plug(plugin);
                 }, this);
             }
+        },
+        /**
+        * Returns wether or not to obserChanges on the DOM
+        * By default `observeDomChanges` will be enabled 
+        * unless `gpuOptimization` is set to true.
+        *
+        * @method _observeChanges
+        * @return {Boolean} Boolean to wether observe changes or not.
+        * @protected
+        */
+        _observeChanges: function () {
+            return this.opts.observeDomChanges && !this.opts.gpuOptimization;
+        },
+        /**
+        * Creates a MutationObserver object and 
+        * sets it to observe the Scoller wrapper elelement.
+        *
+        * @method _initializeDOMObserver
+        * @private
+        */
+        _initializeDOMObserver: function () {
+            var self     = this,
+                config   = this.opts.observeDomConfig,
+                observer = this.observer = new MutationObserver(function () {
+                    self._observedDOMChange.apply(self, arguments);
+                });
+
+            observer.observe(this.wrapper, config);
+        },
+        _observedDOMChange: function (e) {
+            this.refresh();
         },
         /**
         * Helper method to merge two object configurations.
@@ -491,6 +540,10 @@
 
             eventType(this.scroller, 'transitionend', this);
             eventType(this.scroller, SUPPORT.prefix + 'TransitionEnd', this);
+
+            if (this._observeChanges()) {
+                this._initializeDOMObserver();
+            }
         },
 
         /**
