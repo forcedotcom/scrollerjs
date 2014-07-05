@@ -936,6 +936,7 @@
             this._endMoveRAF(); // Always cancel the debounce RAF
 
             if (!this.enabled || !this.moved || (EVENT_TYPE[e.type] !== this._initiated)) {
+                this._initiated = false;
                 return;
             }
 
