@@ -319,7 +319,7 @@
         * @protected
         */
         _observeChanges: function () {
-            return this.opts.observeDomChanges && !this.opts.gpuOptimization;
+            return window.MutationObserver && this.opts.observeDomChanges && !this.opts.gpuOptimization;
         },
         /**
         * Creates a MutationObserver object and 
