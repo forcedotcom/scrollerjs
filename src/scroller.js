@@ -588,8 +588,8 @@
             if (toHookMethod) {
                 if (when === HOOK_AFTER) {
                     this[method] = function () {
-                        var ret = toHookMethod.apply(this, arguments);
-                        return hookFn.call(this, ret);
+                        toHookMethod.apply(this, arguments);
+                        hookFn.apply(this, arguments);
                     };
                 } else if (when === HOOK_BEFORE) {
                     this[method] = function () {
