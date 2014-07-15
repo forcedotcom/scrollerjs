@@ -238,6 +238,10 @@
         * ==================================
         */
         getPTLSize: function () {
+            if (!this._ptlThreshold) {
+                this._ptlThreshold = this.ptlDOM.offsetHeight;
+            }
+
             return this._ptlThreshold;
         },
         getPTLSnapTime: function () {
