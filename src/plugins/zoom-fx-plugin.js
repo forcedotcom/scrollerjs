@@ -60,7 +60,7 @@
 
             matrix.m42 = y; // sets initial y
             matrix.m41 = x; // sets initial x
-            matrix.m33 = 0; // sets a z coord so is "matrix3d"
+            matrix.m33 = 1; // sets a z coord so is "matrix3d"
 
             matrix = matrix.scale(normalizedPos);
             //matrix = matrix.rotate(0,0, (2 * (3 + normalizedPos)), 0.01);
