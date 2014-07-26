@@ -89,6 +89,22 @@
         SCROLL_HORIZONTAL = 'horizontal',
 
         /**
+        * Configuration object for the MutatorObserver
+        *
+        * @property MUTATOR_OBSERVER_CONFIG
+        * @type Object
+        * @static
+        * @final
+        */
+        MUTATOR_OBSERVER_CONFIG = {
+            subtree    : true, 
+            childList  : true, 
+            attributes : false
+            // NOTE: if using attributeFilter
+            // Avoid listen for "style" attribute changes
+        },
+
+        /**
         * Default configuration for the scroller.
         * This option can be modified at the static level
         * or on a per instance basis.
@@ -114,7 +130,9 @@
             scrollbars            : false,
             infiniteLoading       : false,
             gpuOptimization       : false,
-            debounce              : true
+            debounce              : true,
+            observeDomChanges     : true,
+            observeDomConfig      : MUTATOR_OBSERVER_CONFIG
         },
 
         /**
@@ -292,6 +310,37 @@
             }
         },
         /**
+        * Returns wether or not to obserChanges on the DOM
+        * By default `observeDomChanges` will be enabled 
+        * unless `gpuOptimization` is set to true.
+        *
+        * @method _observeChanges
+        * @return {Boolean} Boolean to wether observe changes or not.
+        * @protected
+        */
+        _observeChanges: function () {
+            return window.MutationObserver && this.opts.observeDomChanges && !this.opts.gpuOptimization;
+        },
+        /**
+        * Creates a MutationObserver object and 
+        * sets it to observe the Scoller wrapper elelement.
+        *
+        * @method _initializeDOMObserver
+        * @private
+        */
+        _initializeDOMObserver: function () {
+            var self     = this,
+                config   = this.opts.observeDomConfig,
+                observer = this.observer = new MutationObserver(function () {
+                    self._observedDOMChange.apply(self, arguments);
+                });
+
+            observer.observe(this.wrapper, config);
+        },
+        _observedDOMChange: function (e) {
+            this.refresh();
+        },
+        /**
         * Helper method to merge two object configurations.
         * Relies on the `Helpers` utility module.
         *
@@ -386,15 +435,14 @@
             var scrollerDOM = this.scroller,
                 // We need to take into account if the `PullToLoadMore` plugin is active
                 // and in that case substract the height from the scrollable area size
-                ptl         = this.opts.pullToLoadMore,
-                ptl_offset  = this._ptlThreshold || 0;
+                ptl         = this.opts.pullToLoadMore;
 
             this._setWrapperSize();
             this._sizePullToShowMore();
 
             // Once all the sizes are accurate, performn the scroll size calculations
             this.scrollerWidth  = scrollerDOM.offsetWidth;
-            this.scrollerHeight = ptl ? scrollerDOM.offsetHeight - ptl_offset : scrollerDOM.offsetHeight;
+            this.scrollerHeight = ptl ? scrollerDOM.offsetHeight - this.getPTLSize() : scrollerDOM.offsetHeight;
 
             this.maxScrollX     = this.wrapperWidth  - this.scrollerWidth;
             this.maxScrollY     = this.wrapperHeight - this.scrollerHeight;
@@ -417,6 +465,18 @@
         _sizePullToShowMore: function () {
             //To be overriden
         },
+        /**
+        * To be overriden by the `PullToShowMore` plugin.
+        * Gets the height of `PullToShowMore` so
+        * it can be taken into account when calculating the total scrollable size.
+        *
+        * @method getPTLSize
+        * @private
+        */
+        getPTLSize: function () {
+            return 0;
+        },
+
         /**
         * Private destroy function that is responsible for the destruction of the
         * instance itself. 
@@ -491,6 +551,10 @@
 
             eventType(this.scroller, 'transitionend', this);
             eventType(this.scroller, SUPPORT.prefix + 'TransitionEnd', this);
+
+            if (this._observeChanges()) {
+                this._initializeDOMObserver();
+            }
         },
 
         /**
@@ -535,8 +599,8 @@
             if (toHookMethod) {
                 if (when === HOOK_AFTER) {
                     this[method] = function () {
-                        var ret = toHookMethod.apply(this, arguments);
-                        return hookFn.call(this, ret);
+                        toHookMethod.apply(this, arguments);
+                        hookFn.apply(this, arguments);
                     };
                 } else if (when === HOOK_BEFORE) {
                     this[method] = function () {
@@ -883,6 +947,7 @@
             this._endMoveRAF(); // Always cancel the debounce RAF
 
             if (!this.enabled || !this.moved || (EVENT_TYPE[e.type] !== this._initiated)) {
+                this._initiated = false;
                 return;
             }
 

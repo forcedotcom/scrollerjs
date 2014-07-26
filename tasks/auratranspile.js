@@ -22,12 +22,12 @@ module.exports = function(grunt) {
     var DEPENDENCIES = 'build/dependencies.min.js',
         SCROLLER     = 'src/scroller.js',
         SURFACEM     = 'src/surface-manager.js',
-        SCROLLBARS   = 'src/indicators-plugin.js',
-        PTR          = 'src/pull-to-refresh.js',
-        PTL          = 'src/pull-to-load-more.js',
-        IL           = 'src/infinite-loading.js',
-        EP           = 'src/endless-plugin.js',
-        SP           = 'src/snap-plugin.js';
+        SCROLLBARS   = 'src/plugins/indicators-plugin.js',
+        PTR          = 'src/plugins/pull-to-refresh.js',
+        PTL          = 'src/plugins/pull-to-load-more.js',
+        IL           = 'src/plugins/infinite-loading.js',
+        EP           = 'src/plugins/endless-plugin.js',
+        SP           = 'src/plugins/snap-plugin.js';
 
 
     grunt.registerTask('auratranspile', function () {
