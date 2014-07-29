@@ -435,7 +435,7 @@
             
             this._indicators.push(new Indicator(this, {
                 el          : scrollbar,
-                interactive : interactive,
+                interactive : interactive
             }));
         },
         _createDefaultScrollbar: function (vertical, interactive, customStyle) {
