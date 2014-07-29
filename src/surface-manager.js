@@ -551,7 +551,7 @@
                 this._appendData(parsedData);
                 this._updateSurfaceManager();
             }
-        },
+        }
     };   
 
     SCROLLER.SurfaceManager = PLUGINS.SurfaceManager = SurfaceManager;
