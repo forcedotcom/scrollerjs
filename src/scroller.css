@@ -21,10 +21,6 @@
     box-sizing: border-box;
 }
 
-html {
-    -ms-touch-action: none;
-}
-
 .surface {
     position: absolute;
     -webkit-transform-origin: center center;
@@ -81,6 +77,16 @@ html {
     height: 100%;
 }
 
+.scroll-horizontal {
+    -ms-touch-action: pan-y;
+    touch-action: pan-y;
+}
+
+.scroll-vertical {
+    -ms-touch-action: pan-x;
+    touch-action: pan-x;
+}
+
 .pullToRefresh {
     -webkit-transform : translate3d(0,0,0);
     -moz-transform    : translate3d(0,0,0);
@@ -107,7 +113,7 @@ html {
     display: inline-block;
     background-position: 50%;
     background-repeat: no-repeat;
-    border-radius: 5px; 
+    border-radius: 5px;
 
     -webkit-transition : -webkit-transform 300ms;
     -moz-transition    : -moz-transform 300ms;
