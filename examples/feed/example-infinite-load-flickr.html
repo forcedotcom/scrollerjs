@@ -564,7 +564,7 @@ var JSONP = (function(){
         function getData () {
             var word = words.pop();
             if (word) {
-            JSONP.get('http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20flickr.photos.search%20where%20text%3D%22' + word +'%22%20and%20api_key%3D%2270fa72d50df35d7ef05c556229603bdc%22&format=json&diagnostics=true', null, null, dataBack);
+            JSONP.get('https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20flickr.photos.search%20where%20text%3D%22' + word +'%22%20and%20api_key%3D%2270fa72d50df35d7ef05c556229603bdc%22&format=json&diagnostics=true', null, null, dataBack);
             } else {
                 dataBack([]);
             }
