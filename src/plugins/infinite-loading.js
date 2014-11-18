@@ -114,10 +114,10 @@
 
             if (this.scrollVertical) {
                 pos  = y;
-                size = this.scrollerWidth;
+                size = this.scrollerHeight;
             } else {
                 pos  = x;
-                size = this.scrollerHeight;
+                size = this.scrollerWidth;
             }
 
             threshold = config.threshold || 3 * size;
