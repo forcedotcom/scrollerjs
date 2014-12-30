@@ -174,7 +174,7 @@
             },
             bounce : {
                 style : EASING_BOUNCE.toString(),
-                fn    : EASING_BOUNCE,
+                fn    : EASING_BOUNCE
             }
         },
 
@@ -1308,7 +1308,12 @@
         * @protected
         */
         _translate: function (x, y) {
-            this.scrollerStyle[STYLES.transform] = 'matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,' + x +',' + y +', 0, 1)';
+            
+            // TODO: We use translate3d here due to a bug in compositing layers on iOS 8.1.x
+            // Revert this back once the bug is fixed.
+            // this.scrollerStyle[STYLES.transform] = 'matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,' + x +',' + y +', 0, 1)';
+
+            this.scrollerStyle[STYLES.transform] = 'translate3d(' + x +'px,' + y +'px, 0)';
             this.x = x;
             this.y = y;
         },
@@ -1450,6 +1455,10 @@
         _scrollTo: function (x, y, time, easing) {
             easing || (easing = EASING.regular);
 
+            if (this.opts.userNativeScroller) {
+                return this._wrapperScrollTo(x,y);
+            }
+
             if (!time || this.opts.useCSSTransition) {
                 this._transitionEasing(easing.style);
                 this._transitionTime(time);
@@ -1464,6 +1473,21 @@
             } else {
                 this._animate(x, y, time, easing.fn);
             }
+        },
+
+        /**
+         * Scroll to a {x,y} position using the wrapper's scrollTop and scrollLeft attributes.
+         *
+         * @params x {float} The x-position to scroll to
+         * @params y {float} The y-position to scroll to
+         * @method _wrapperScrollTo
+         * @private
+         *
+         * TODO: Integrate with open source scroller in 196
+         */
+        _wrapperScrollTo: function(x, y) {
+               this.wrapper.scrollTop = this.scrollVertical ? Math.abs(y) : this.wrapper.scrollTop;
+               this.wrapper.scrollLeft = this.scrollVertical ? this.wrapper.scrollLeft : Math.abs(x);
         },
 
         /**
@@ -1544,18 +1568,22 @@
         **/
         plug: function (plugin) {
             var ScrollerPlugin = typeof plugin === 'string' ? PLUGINS[plugin] : plugin,
-                protoExtension =  ScrollerPlugin.prototype,
+                protoExtension =  ScrollerPlugin.prototype || ScrollerPlugin, // try to get the prototype if it has one
                 whiteList      = ['init'],
                 methodName;
-                
-            for (methodName in protoExtension) {
-                if (whiteList.indexOf(methodName) === -1) {
-                    this[methodName] = protoExtension[methodName];
-                }
-            }
 
-            if (protoExtension.init) {
-                protoExtension.init.call(this);
+            if (ScrollerPlugin) {
+                for (methodName in protoExtension) {
+                    if (whiteList.indexOf(methodName) === -1) {
+                        this[methodName] = protoExtension[methodName];
+                    }
+                }
+
+                if (protoExtension.init) {
+                    protoExtension.init.call(this);
+                }
+            } else {
+                console.log('Error adding plugin');
             }
         },
 
