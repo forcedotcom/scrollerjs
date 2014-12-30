@@ -398,7 +398,7 @@
                 topSurface       = this._positionedSurfacesFirst(),
                 topSurfaceEnd    = this._getSurfaceTotalOffset(topSurface),
                 bottomSurface    = this._positionedSurfacesLast(),
-                bottomSurfaceEnd = bottomSurface.offset,
+                bottomSurfaceEnd = bottomSurface ? bottomSurface.offset:0,
                 // vars
                 yieldTask        = false,
                 inUse            = false,
