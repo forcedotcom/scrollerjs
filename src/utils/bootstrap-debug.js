@@ -15,7 +15,7 @@
  */
 (function(w) {
     'use strict';
-
+    w || (w = window);
     if (w.document.location.hash === '#debug') {
         w.DEBUG = {
             warn: function () {

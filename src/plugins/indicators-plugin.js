@@ -15,7 +15,8 @@
  */
 (function (w) {
     'use strict';
-
+    w || (w = window);
+    
     var SCROLLER = w.__S || (w.__S = {}), //NAMESPACE
         NOW      = Date.now || function () { return new Date().getTime(); },
         RAF      = w.requestAnimationFrame,

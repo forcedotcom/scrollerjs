@@ -15,6 +15,7 @@
  */
 (function (w) {
     'use strict';
+    w || (w = window);
 
     var SCROLLER = w.__S || (w.__S = {}),
         PLUGINS  = SCROLLER.plugins || (SCROLLER.plugins = {}),

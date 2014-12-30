@@ -15,6 +15,8 @@
  */
 (function (w) {
     'use strict';
+    w || (w = window);
+    
     // jshint ignore: start
 
     // FOREACH polyfill

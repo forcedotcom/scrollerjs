@@ -15,7 +15,8 @@
  */
 (function (w) {
     'use strict';
-
+    w || (w = window);
+    
     // GLOBALS UTILS
     var NOW            = Date.now || function () { return new Date().getTime(); },
         RAF            = w.requestAnimationFrame,

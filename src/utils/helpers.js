@@ -15,7 +15,8 @@
  */
 (function (w) {
     'use strict';
-
+    w || (w = window);
+    
 	var SCROLLER = w.__S || (w.__S = {}),
         HELPERS = {
             simpleMerge: function (obj1, obj2) {

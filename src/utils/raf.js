@@ -15,7 +15,8 @@
  */
 (function(w) {
     'use strict';
-
+    w || (w = window);
+    
     var lastTime = 0,
         caf      = 'CancelAnimationFrame',
         vendors  = ['ms', 'moz', 'webkit', 'o'];

@@ -16,7 +16,8 @@
 // jshint ignore: start
 // POLYFILL CLASSLIST (https://github.com/remy/polyfills/blob/master/classList.js)
 (function (w) {
-
+  w || (w = window);
+  
   if (!(typeof w.Element === "undefined" || "classList" in document.documentElement)) {
 
     // adds indexOf to Array prototype for IE support

@@ -15,7 +15,7 @@
  */
 (function (w) {
 	'use strict';
-
+    w || (w = window);
 	// Namespace
 	var SCROLLER = w.__S || (w.__S = {}),
 		ITERATIONS = 4;

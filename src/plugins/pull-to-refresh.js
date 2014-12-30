@@ -15,6 +15,8 @@
  */
 (function (w) {
     'use strict';
+    w || (w = window);
+    
     // NAMESPACES
     var SCROLLER = w.__S || (w.__S = {}),
         RAF      = w.requestAnimationFrame,
