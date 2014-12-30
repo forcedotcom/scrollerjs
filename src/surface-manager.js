@@ -61,10 +61,12 @@
                 items    = [],
                 item, itemStyle, i;
 
+            var offset = 0;
             if (size) {
                 for (i = 0; i < size; i++) {
                     item = domItems[i];
-                    items[i] = {dom : item};
+                    items[i] = {dom : item, offset:offset, width: this.scroller.children[0].offsetWidth};
+                    offset += items[i].width;
                     this.scroller.removeChild(item);
                 }
             }
@@ -527,10 +529,24 @@
                 this._positionedSurfacesPop();
             }
 
+            // Calculate offset per item
+            var offset = this.items[this.items.length-1].offset+
+                this.items[this.items.length-1].width;
+
+            var w = document.createElement("div");
+            w.style.visibility = "hidden";
+            w.style.position = "absolute";
+            w.style.display = "inline-block";
+            document.lastChild.appendChild(w);
+
             for (i = 0; i < data.length; i++) {
-                item = {dom: data[i]};
+                w.appendChild(data[i]);
+                item = {dom: data[i], offset:offset, width:w.offsetWidth};
+                offset += w.offsetWidth;
+                w.removeChild(item.dom);
                 this.items.push(item);
             }
+            w.remove();
 
             if (this.opts.pullToLoadMore) {
                 //add the back as the last item again
