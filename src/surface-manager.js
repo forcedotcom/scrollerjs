@@ -141,6 +141,8 @@
             return surfaces;
         },
         _getSurfaceTotalOffset: function (surface) {
+            if (!surface)
+                return 0;
             return surface.offset + (this.scrollVertical ? surface.height : surface.width);
         },
         _attachItemInSurface: function (item, surface, config) {
@@ -297,6 +299,8 @@
             return this._positionedSurfacesFirst();
         },
         _itemsLeft: function (end) {
+            if (this.surfacesPositioned.length == 0)
+                return 0;
             var firstIndex = this._positionedSurfacesFirst().contentIndex,
                 lastIndex  = this._positionedSurfacesLast().contentIndex,
                 count      = this.items.length - 1,
