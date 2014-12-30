@@ -394,16 +394,19 @@
             });
         },
         _setVirtualScrollSize: function () {
-            var last          = this._positionedSurfacesLast(),
-                virtualScroll = last.offset + (this.scrollVertical ? last.height : last.width),
-                virtualSize   = this.scrollVertical ? 'virtualSizeY' : 'virtualSizeX';
+            var last          = this._positionedSurfacesLast();
+            if (last)
+            {
+                var virtualScroll = last.offset + (this.scrollVertical ? last.height : last.width),
+                    virtualSize   = this.scrollVertical ? 'virtualSizeY' : 'virtualSizeX';
 
-            if (virtualScroll > this._virtualScroll) {
-                this._virtualScroll = virtualScroll;
-                this._indicators.forEach(function (i) {
-                    i[virtualSize] = virtualScroll;
-                    i.refresh();
-                });
+                if (virtualScroll > this._virtualScroll) {
+                    this._virtualScroll = virtualScroll;
+                    this._indicators.forEach(function (i) {
+                        i[virtualSize] = virtualScroll;
+                        i.refresh();
+                    });
+                }
             }
         },
         _updateIndicators: function () {
