@@ -141,8 +141,6 @@
 
             this.initiated  = true;
             this.moved      = false;
-            this.lastPointX = point.pageX;
-            this.lastPointY = point.pageY;
             this.startTime  = NOW();
 
             if (!this.opts.disableTouch) {
@@ -159,21 +157,17 @@
         _move: function (e) {
             var point     = e.touches ? e.touches[0] : e,
                 timestamp = NOW(),
-                deltaX, deltaY, newX, newY;
+                newX, newY;
 
             e.preventDefault();
             e.stopPropagation();
 
             this.moved = true;
 
-            deltaX = point.pageX - this.lastPointX;
-            deltaY = point.pageY - this.lastPointY;
-
-            this.lastPointX = point.pageX;
-            this.lastPointY = point.pageY;
-
-            newX = this.x + deltaX;
-            newY = this.y + deltaY;
+            newX = point.pageX - this.wrapper.getBoundingClientRect().left
+                - this.width/2;
+            newY = point.pageY - this.wrapper.getBoundingClientRect().top 
+                - this.height/2;
 
             this._pos(newX, newY);
 
@@ -401,16 +395,19 @@
             });
         },
         _setVirtualScrollSize: function () {
-            var last          = this._positionedSurfacesLast(),
-                virtualScroll = last.offset + (this.scrollVertical ? last.height : last.width),
-                virtualSize   = this.scrollVertical ? 'virtualSizeY' : 'virtualSizeX';
+            var last          = this._positionedSurfacesLast();
+            if (last)
+            {
+                var virtualScroll = last.offset + (this.scrollVertical ? last.height : last.width),
+                    virtualSize   = this.scrollVertical ? 'virtualSizeY' : 'virtualSizeX';
 
-            if (virtualScroll > this._virtualScroll) {
-                this._virtualScroll = virtualScroll;
-                this._indicators.forEach(function (i) {
-                    i[virtualSize] = virtualScroll;
-                    i.refresh();
-                });
+                if (virtualScroll > this._virtualScroll) {
+                    this._virtualScroll = virtualScroll;
+                    this._indicators.forEach(function (i) {
+                        i[virtualSize] = virtualScroll;
+                        i.refresh();
+                    });
+                }
             }
         },
         _updateIndicators: function () {

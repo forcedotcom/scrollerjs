@@ -62,10 +62,12 @@
                 items    = [],
                 item, itemStyle, i;
 
+            var offset = 0;
             if (size) {
                 for (i = 0; i < size; i++) {
                     item = domItems[i];
-                    items[i] = {dom : item};
+                    items[i] = {dom : item, offset:offset, width: this.scroller.children[0].offsetWidth};
+                    offset += items[i].width;
                     this.scroller.removeChild(item);
                 }
             }
@@ -140,6 +142,8 @@
             return surfaces;
         },
         _getSurfaceTotalOffset: function (surface) {
+            if (!surface)
+                return 0;
             return surface.offset + (this.scrollVertical ? surface.height : surface.width);
         },
         _attachItemInSurface: function (item, surface, config) {
@@ -249,14 +253,30 @@
             var p = this.surfacesPositioned;
             return p[p.length - 1];
         },
-        _positionedSurfacesPush: function () {
-            var bottomSurface    = this._positionedSurfacesLast(),
-                bottomSurfaceEnd = this._getSurfaceTotalOffset(bottomSurface),
-                index            = this._mod(bottomSurface.contentIndex + 1),
-                payload          = {index: index, offset: bottomSurfaceEnd},
-                surface;
+        _positionedSurfacesPush: function (boundaries) {
+            var bottomSurface    = this._positionedSurfacesLast(), surface;
+            if (!bottomSurface)
+            {
+                var index = 0;
+                for (var i=0; i<this.items.length-1; i++)
+                {
+                    if (this.items[i].offset > boundaries.top)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+                        
+                var  payload    = 
+                        {index: index, offset: this.items[index].offset};
+            }
+            else
+            {
+                var index            = this._mod(bottomSurface.contentIndex + 1),
+                    payload          = {index: index, offset: this._getSurfaceTotalOffset(bottomSurface)};
+            }
 
-            if (!this._positionBeingUsed(index)) {
+            if (!bottomSurface || !this._positionBeingUsed(index)) {
                 surface = this._getAvailableSurface();
                 this._attachItemInSurface(this.items[index], surface, payload);
                 this.surfacesPositioned.push(surface);
@@ -273,13 +293,32 @@
             this._dettachItemInSurface(surface);
             return this._positionedSurfacesLast();
         },
-        _positionedSurfacesUnshift: function () {
-            var topSurface = this._positionedSurfacesFirst(),
-                index      = this._mod(topSurface.contentIndex - 1),
-                payload    = {index: index, offset: topSurface.offset, preCalculateSize: true},
-                surface;
+        _positionedSurfacesUnshift: function (boundaries) {
+            // Si no hay topSurface, hay que traerse de this.items el item
+            // que esté en el offset dentro del boundaries
+            // los items deberían tener almacenados en el array el offset
+            var topSurface = this._positionedSurfacesFirst(), surface;
+            if (!topSurface)
+            {
+                var index = 0;
+                for (var i=0; i<this.items.length-1; i++)
+                    if (this.items[i].offset > boundaries.bottom)
+                    {
+                        index = i;
+                        break;
+                    }
+                        
+                var  payload    = 
+                        {index: index, offset: this.items[index].offset, preCalculateSize: true};
+            }
+            else
+            {
+                var  index      = this._mod(topSurface.contentIndex - 1),
+                    payload    = 
+                        {index: index, offset: topSurface.offset, preCalculateSize: true};
+            }
 
-            if (!this._positionBeingUsed(index)) {
+            if (!topSurface || !this._positionBeingUsed(index)) {
                 surface = this._getAvailableSurface();
                 this._attachItemInSurface(this.items[index], surface, payload);
                 this.surfacesPositioned.unshift(surface);
@@ -296,6 +335,8 @@
             return this._positionedSurfacesFirst();
         },
         _itemsLeft: function (end) {
+            if (this.surfacesPositioned.length == 0)
+                return 0;
             var firstIndex = this._positionedSurfacesFirst().contentIndex,
                 lastIndex  = this._positionedSurfacesLast().contentIndex,
                 count      = this.items.length - 1,
@@ -311,7 +352,11 @@
         },
         _getBoundaries: function (coord, size) {
             var offsetSize       = this.activeOffset,
-                abs             = Math.abs(coord);
+                abs             = Math.abs(coord.pos),
+                absMax          = Math.abs(coord.maxScroll);
+
+            if (abs>absMax)
+                abs = absMax;
 
             return {
                 top    : abs - offsetSize > 0 ? abs - offsetSize : 0,
@@ -348,13 +393,13 @@
 
             var self             = this,
                 current          = this._getPosition(),
-                boundaries       = this._getBoundaries(current.pos, current.size),
+                boundaries       = this._getBoundaries(current, current.size),
                 itemsLeft        = this._itemsLeft('bottom'),
                 // surfaces
                 topSurface       = this._positionedSurfacesFirst(),
                 topSurfaceEnd    = this._getSurfaceTotalOffset(topSurface),
                 bottomSurface    = this._positionedSurfacesLast(),
-                bottomSurfaceEnd = bottomSurface.offset,
+                bottomSurfaceEnd = bottomSurface ? bottomSurface.offset:0,
                 // vars
                 yieldTask        = false,
                 inUse            = false,
@@ -377,11 +422,22 @@
                     self._resetPosition(self.opts.bounceTime);
                 });
             }
-            // Scrolling down
+            // Scrolling down/right
             if (current.dist < 0) {
+                // SHIFT | Remove elements from the top that are out of the upperBound region.
+                while (topSurface && boundaries.top > topSurfaceEnd && this._recycleSurface('top')) {
+                    topSurface    = this._positionedSurfacesShift();
+                    if (topSurface)
+                        topSurfaceEnd = this._getSurfaceTotalOffset(topSurface);
+                    yieldTask     = true;
+                }
+                bottomSurface    = this._positionedSurfacesLast();
+
                 // PUSH | Add elements to the end when the last surface is inside the lowerBound limit.
-                while (this._itemsLeft('bottom') && bottomSurfaceEnd < boundaries.bottom && !inUse) {
-                    surface = this._positionedSurfacesPush();
+                while (!bottomSurface || (this._itemsLeft('bottom') && 
+                            bottomSurfaceEnd < boundaries.bottom && 
+                            !inUse)) {
+                    surface = this._positionedSurfacesPush(boundaries);
                     if (surface === bottomSurface) {
                         inUse = true;
                     } else {
@@ -395,18 +451,21 @@
                     return this._setInfiniteScrollerSize();
                 }
 
-                // SHIFT | Remove elements from the top that are out of the upperBound region.
-                while (boundaries.top > topSurfaceEnd && this._recycleSurface('top')) {
-                    topSurface    = this._positionedSurfacesShift();
-                    topSurfaceEnd = this._getSurfaceTotalOffset(topSurface);
-                    yieldTask     = true;
-                }
 
-            // User is Scrolling up
+            // User is Scrolling up/left
             } else {
-                // UNSHIFT | Add elements on the beggining of the slist
-                while (topSurface.offset > boundaries.top && !inUse) {
-                    surface = this._positionedSurfacesUnshift();
+                // POP | Remove from the end
+                while (bottomSurfaceEnd && bottomSurfaceEnd > boundaries.bottom && this._itemsLeft('top') && this._recycleSurface('bottom')) {
+                    bottomSurface = this._positionedSurfacesPop();
+                    if (bottomSurface)
+                        bottomSurfaceEnd = bottomSurface.offset;
+                    yieldTask        = true;
+                }
+                topSurface       = this._positionedSurfacesFirst();
+
+                // UNSHIFT | Add elements on the beggining of the list
+                while (!topSurface || (topSurface.offset > boundaries.top && !inUse)) {
+                    surface = this._positionedSurfacesUnshift(boundaries);
                     if (surface === topSurface) {
                         inUse = true;
                     } else {
@@ -420,12 +479,6 @@
                     return this._setInfiniteScrollerSize();
                 }
 
-                // POP | Remove from the end
-                while (bottomSurfaceEnd > boundaries.bottom && this._itemsLeft('top') && this._recycleSurface('bottom')) {
-                    bottomSurface = this._positionedSurfacesPop();
-                    bottomSurfaceEnd = bottomSurface.offset;
-                    yieldTask        = true;
-                }
             }
 
             if (yieldTask) {
@@ -528,10 +581,24 @@
                 this._positionedSurfacesPop();
             }
 
+            // Calculate offset per item
+            var offset = this.items[this.items.length-1].offset+
+                this.items[this.items.length-1].width;
+
+            var w = document.createElement("div");
+            w.style.visibility = "hidden";
+            w.style.position = "absolute";
+            w.style.display = "inline-block";
+            document.lastChild.appendChild(w);
+
             for (i = 0; i < data.length; i++) {
-                item = {dom: data[i]};
+                w.appendChild(data[i]);
+                item = {dom: data[i], offset:offset, width:w.offsetWidth};
+                offset += w.offsetWidth;
+                w.removeChild(item.dom);
                 this.items.push(item);
             }
+            w.remove();
 
             if (this.opts.pullToLoadMore) {
                 //add the back as the last item again
