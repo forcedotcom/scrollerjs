@@ -316,7 +316,11 @@
         },
         _getBoundaries: function (coord, size) {
             var offsetSize       = this.activeOffset,
-                abs             = Math.abs(coord);
+                abs             = Math.abs(coord.pos),
+                absMax          = Math.abs(coord.maxScroll);
+
+            if (abs>absMax)
+                abs = absMax;
 
             return {
                 top    : abs - offsetSize > 0 ? abs - offsetSize : 0,
@@ -353,7 +357,7 @@
 
             var self             = this,
                 current          = this._getPosition(),
-                boundaries       = this._getBoundaries(current.pos, current.size),
+                boundaries       = this._getBoundaries(current, current.size),
                 itemsLeft        = this._itemsLeft('bottom'),
                 // surfaces
                 topSurface       = this._positionedSurfacesFirst(),
