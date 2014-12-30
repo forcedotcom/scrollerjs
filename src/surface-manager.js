@@ -342,7 +342,7 @@
             }
         },
         _updateSurfaceManager: function () {
-            if (this._emptyScroller()) {
+            if (this._emptyScroller() || !this.surfacesPositioned.length) {
                 return;
             }
 
