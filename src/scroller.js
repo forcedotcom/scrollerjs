@@ -1567,23 +1567,23 @@
             
         **/
         plug: function (plugin) {
-            var ScrollerPlugin = typeof plugin === 'string' ? PLUGINS[plugin] : plugin,
-                protoExtension =  ScrollerPlugin.prototype || ScrollerPlugin, // try to get the prototype if it has one
-                whiteList      = ['init'],
+            var ScrollerPlugin  = typeof plugin === 'string' ? PLUGINS[plugin] : plugin,
+                PluginPrototype = (ScrollerPlugin && ScrollerPlugin.prototype) || ScrollerPlugin, // try to get the prototype if it has one
+                whiteList       = ['init'],
                 methodName;
 
-            if (ScrollerPlugin) {
-                for (methodName in protoExtension) {
+            if (PluginPrototype) {
+                for (methodName in PluginPrototype) {
                     if (whiteList.indexOf(methodName) === -1) {
-                        this[methodName] = protoExtension[methodName];
+                        this[methodName] = PluginPrototype[methodName];
                     }
                 }
 
-                if (protoExtension.init) {
-                    protoExtension.init.call(this);
+                if (PluginPrototype.init) {
+                    PluginPrototype.init.call(this);
                 }
             } else {
-                console.log('Error adding plugin');
+                console.log('Error adding plugin:', plugin);
             }
         },
 
