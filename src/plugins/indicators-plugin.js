@@ -166,14 +166,19 @@
 
             this.moved = true;
 
-            deltaX = point.pageX - this.lastPointX;
-            deltaY = point.pageY - this.lastPointY;
+            if (this.scroller.opts.gpuOptimization) {
+                newX = point.pageX - this.wrapper.getBoundingClientRect().left - this.width / 2;
+                newY = point.pageY - this.wrapper.getBoundingClientRect().top - this.height / 2;
+            } else {
+                deltaX = point.pageX - this.lastPointX;
+                deltaY = point.pageY - this.lastPointY;
 
-            this.lastPointX = point.pageX;
-            this.lastPointY = point.pageY;
+                this.lastPointX = point.pageX;
+                this.lastPointY = point.pageY;
 
-            newX = this.x + deltaX;
-            newY = this.y + deltaY;
+                newX = this.x + deltaX;
+                newY = this.y + deltaY;
+            }
 
             this._pos(newX, newY);
 
