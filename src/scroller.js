@@ -255,6 +255,21 @@
     Scroller.Logger                = Logger;
     Scroller.plugins               = PLUGINS;
 
+
+    /**
+    * Register a plugin in to the global registry
+    * so all scrollers can plug it anytime.
+    * @static
+    * @method registerPlugin
+    * @public
+    */
+    Scroller.registerPlugin = function (name, plugin) {
+        if (this.plugins[name]) {
+            Logger.log('Overriding plugin: ', name);
+        }
+        this.plugins[name] = plugin;
+    };
+
     Scroller.prototype = {
         /**
         * Called in the constructor.
