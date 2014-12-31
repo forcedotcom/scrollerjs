@@ -16,8 +16,14 @@
 (function (w) {
     'use strict';
     w || (w = window);
-    if (!w.__S) {
-        w.__S = {plugins: {}};
-        w.DEBUG = {warn: function () {}, log: function () {}};
+
+    var NS = '__S';
+    if (typeof w[NS] === 'undefined') {
+        w[NS] = {};
     }
+
+    NS = w[NS];
+    NS.plugins = {};
+    NS.Logger  = {log: function () {}};
+
 }(window));

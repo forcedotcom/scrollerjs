@@ -19,6 +19,7 @@
 
     var SCROLLER = w.__S || (w.__S = {}),
         PLUGINS  = SCROLLER.plugins || (SCROLLER.plugins = {}),
+        Logger   = SCROLLER.Logger,
 
         CONFIG_DEFAULTS = {
             labelNoData : 'No more data to display',
@@ -44,7 +45,7 @@
                 thresholdCheck = this.opts.gpuOptimization ? this._checkItemsthreshold : this._checkLoadingThreshold;
 
             if (!this.opts.infiniteLoading || !ilConfig.dataProvider) {
-                w.DEBUG.warn('InfiniteLoading will not work because there is no data provider or is not activated');
+                Logger.log('warn', 'InfiniteLoading will not work because there is no data provider or is not activated');
                 return;
             }
 
@@ -60,7 +61,7 @@
                 };
 
             if (ilDataProvider) {
-                w.DEBUG.log('fetching data');
+                Logger.log('fetching data');
                 this._ilFetchingData = true;
                 ilDataProvider(callback);
             } else {
@@ -71,18 +72,18 @@
             if (!err) {
                 // the payload returns an array, append it.
                 if (payload instanceof Array && payload.length) {
-                    w.DEBUG.log('Data fetched!');
+                    Logger.log('Data fetched!');
                     this.appendItems(payload);
 
                 // the user manually added the dom elements (wrong thing, but we support it..)
                 } else if (payload === 'refresh') {
-                    w.DEBUG.log('InfiniteLoading: refresh!');
+                    Logger.log('InfiniteLoading: refresh!');
                     this.refresh();
 
                 // If the payload is not "refresh" or an Array, we assume there is no more data.
                 } else {
                     this._ilNoMoreData = true;
-                    w.DEBUG.log('No More data!');
+                    Logger.log('No More data!');
                 }
             }
             this._ilFetchingData = false;

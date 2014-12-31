@@ -18,7 +18,8 @@
     w || (w = window);
     
     var SCROLLER = w.__S || (w.__S = {}),
-        PLUGINS  = SCROLLER.plugins || (SCROLLER.plugins = {});
+        PLUGINS  = SCROLLER.plugins || (SCROLLER.plugins = {}),
+        Logger   = SCROLLER.Logger;
     
     function Endless() {}
 
@@ -82,7 +83,7 @@
             sizeNeeded   = this.activeOffset;
 
             if (i === itemsSize || !sizeNotCover) {
-                w.DEBUG.log(
+                Logger.log(
                     '[WARNING - SCROLLER ENDLESS PLUGIN] - ' +
                     'Items are not sufficient to fulfill all scrollable area');
             }

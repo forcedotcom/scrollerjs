@@ -29,6 +29,7 @@
         SUPPORT        = SCROLLER.support,
         STYLES         = SCROLLER.styles,
         CubicBezier    = SCROLLER.CubicBezier,
+        Logger         = SCROLLER.Logger,
 
         /*
         * For the sake of simplicity, these action-string
@@ -251,6 +252,7 @@
     Scroller.SCROLL_HORIZONTAL     = SCROLL_HORIZONTAL;
     Scroller.MOUSE_WHEEL_SPEED     = MOUSE_WHEEL_SPEED;
     Scroller.MOUSE_WHEEL_INVERTED  = MOUSE_WHEEL_INVERTED;
+    Scroller.Logger                = Logger;
     Scroller.plugins               = PLUGINS;
 
     Scroller.prototype = {
@@ -378,14 +380,14 @@
             // Guard for missconfigurations
 
             if (opts.infiniteLoading && opts.pullToLoadMore) {
-                w.DEBUG.warn(
+                Logger.log(
                     'You cannot have infiniteLoading and pullToShowMore at the same time.' +
                     'Switching to infiniteLoading');
                 this.opts.pullToLoadMore = false;
             }
 
             if (!this.scrollVertical && (opts.pullToRefresh || opts.pullToLoadMore)) {
-                w.DEBUG.warn(
+                Logger.log(
                     'The attributes: pullToRefresh or pullToShowMore are not available in horizontal mode yet.'+
                     ' Switching them to false');
 

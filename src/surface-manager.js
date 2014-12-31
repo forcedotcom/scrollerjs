@@ -22,6 +22,7 @@
         STYLES   = SCROLLER.styles,
         HELPERS  = SCROLLER.helpers,
         RAF      = w.requestAnimationFrame,
+        Logger   = SCROLLER.Logger,
         INITIAL_SURFACES = 10;
     
     function SurfaceManager() {}
@@ -260,7 +261,7 @@
                 surface = this._getAvailableSurface();
                 this._attachItemInSurface(this.items[index], surface, payload);
                 this.surfacesPositioned.push(surface);
-                w.DEBUG.log('PUSH   ', Date.now());
+                Logger.log('PUSH   ', Date.now());
                 return surface;
 
             } else {
@@ -268,7 +269,7 @@
             }
         },
         _positionedSurfacesPop: function () {
-            w.DEBUG.log('POP    ', Date.now());
+            Logger.log('POP    ', Date.now());
             var surface = this.surfacesPositioned.pop();
             this._dettachItemInSurface(surface);
             return this._positionedSurfacesLast();
@@ -283,14 +284,14 @@
                 surface = this._getAvailableSurface();
                 this._attachItemInSurface(this.items[index], surface, payload);
                 this.surfacesPositioned.unshift(surface);
-                w.DEBUG.log('UNSHIFT', Date.now());
+                Logger.log('UNSHIFT', Date.now());
                 return surface;
             } else {
                 return topSurface;
             }
         },
         _positionedSurfacesShift: function () {
-            w.DEBUG.log('SHIFT  ', Date.now());
+            Logger.log('SHIFT  ', Date.now());
             var surface = this.surfacesPositioned.shift();
             this._dettachItemInSurface(surface);
             return this._positionedSurfacesFirst();
@@ -304,8 +305,6 @@
             left = end === 'top' ? firstIndex > 0
                  : end === 'bottom' ? lastIndex < count
                  : firstIndex > 0 || lastIndex < count;
-
-            //DEBUG.log(firstIndex, lastIndex, this.items.length, end ,'>>>' , left);
 
             return left;
         },

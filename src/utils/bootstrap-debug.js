@@ -16,14 +16,11 @@
 (function(w) {
     'use strict';
     w || (w = window);
+    
     if (w.document.location.hash === '#debug') {
-        w.DEBUG = {
-            warn: function () {
-                w.console.warn.apply(console, arguments);
-            },
-            log: function () {
-                w.console.log.apply(w.console, arguments);
-            }
-        };
+        w.__S.Logger = {log: function (type, message) {
+            console.log.apply(console, arguments);
+        }};
     }
+
 }(window));
