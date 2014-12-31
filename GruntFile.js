@@ -13,13 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+var COPYRIGHT = [
+    '/*',
+     '* Copyright (C) 2013 salesforce.com, inc.',
+     '*',
+     '* Licensed under the Apache License, Version 2.0 (the "License");',
+     '* you may not use this file except in compliance with the License.',
+     '* You may obtain a copy of the License at',
+     '*',
+     '*         http://www.apache.org/licenses/LICENSE-2.0',
+     '*',
+     '* Unless required by applicable law or agreed to in writing, software',
+     '* distributed under the License is distributed on an "AS IS" BASIS,',
+     '* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.',
+     '* See the License for the specific language governing permissions and',
+     '* limitations under the License.',
+     '*/',
+     ''
+].join('\n');
+
 module.exports = function (grunt) {
     'use strict';
 
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadTasks('tasks');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
     var minDependencies = [
         'src/utils/bootstrap.js',
@@ -35,6 +55,35 @@ module.exports = function (grunt) {
         clean: {
             build: {
                 src: ['build']
+            }
+        },
+        copy: {
+            aura: {
+                files : [
+                    {src: 'src/utils/bootstrap.js',           dest: 'build/aura/scrollerLib/bootstrap.js'},
+                    {src: 'src/utils/browser-support.js',     dest: 'build/aura/scrollerLib/browserSupport.js'},
+                    {src: 'src/utils/browser-styles.js',      dest: 'build/aura/scrollerLib/browserStyles.js'},
+                    {src: 'src/utils/helpers.js',             dest: 'build/aura/scrollerLib/helpers.js'},
+                    {src: 'src/utils/raf.js',                 dest: 'build/aura/scrollerLib/polyfillRaf.js'},
+                    {src: 'src/utils/class-list.js',          dest: 'build/aura/scrollerLib/polyfullClassList.js'},
+                    {src: 'src/utils/cubic-bezier.js',        dest: 'build/aura/scrollerLib/CubicBezier.js'},
+
+                    {src: 'src/scroller.js',                  dest: 'build/aura/scrollerLib/ScrollerJS.js'},
+
+                    {src: 'src/surface-manager.js',           dest: 'build/aura/scrollerLib/SurfaceManager.js'},
+                    {src: 'src/plugins/pull-to-refresh.js',   dest: 'build/aura/scrollerLib/PullToRefresh.js'},
+                    {src: 'src/plugins/pull-to-load-more.js', dest: 'build/aura/scrollerLib/PullToLoadMore.js'},
+                    {src: 'src/plugins/infinite-loading.js',  dest: 'build/aura/scrollerLib/InfiniteLoading.js'}
+                ],
+                options: {
+                    process: function (content, path) {
+                        var matches = content.match(/(?=\(function)\(([^]+?)( ?\(window\)\));?/),
+                            body    = matches[1];
+
+                        return COPYRIGHT + body;
+
+                    }
+                }
             }
         },
         concat: {
@@ -70,9 +119,9 @@ module.exports = function (grunt) {
                 src: minDependencies.concat([
                     'src/scroller.js',
                     'src/surface-manager.js',
-                    'src/pull-to-refresh.js',
-                    'src/pull-to-load-more.js',
-                    'src/infinite-loading.js'
+                    'src/plugins/pull-to-refresh.js',
+                    'src/plugins/pull-to-load-more.js',
+                    'src/plugins/infinite-loading.js'
                 ]),
                 dest: 'build/scroller-hooks.js'
             },
@@ -80,12 +129,12 @@ module.exports = function (grunt) {
                 src: minDependencies.concat([
                     'src/scroller.js',
                     'src/surface-manager.js',
-                    'src/pull-to-refresh.js',
-                    'src/pull-to-load-more.js',
-                    'src/infinite-loading.js',
-                    'src/endless-plugin.js',
-                    'src/snap-plugin.js',
-                    'src/indicators-plugin.js'
+                    'src/plugins/pull-to-refresh.js',
+                    'src/plugins/pull-to-load-more.js',
+                    'src/plugins/infinite-loading.js',
+                    'src/plugins/endless-plugin.js',
+                    'src/plugins/snap-plugin.js',
+                    'src/plugins/indicators-plugin.js'
                 ]),
                 dest: 'build/scroller-complete.js'
             }
@@ -156,7 +205,7 @@ module.exports = function (grunt) {
     ]);
     
     grunt.registerTask('build:aura', [
-        'build',
-        'auratranspile'
+        'clean',
+        'copy:aura'
     ]);
 };

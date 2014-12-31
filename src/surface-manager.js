@@ -556,5 +556,6 @@
     };   
 
     SCROLLER.SurfaceManager = PLUGINS.SurfaceManager = SurfaceManager;
-    
+    return SurfaceManager;
+
 }(window));
