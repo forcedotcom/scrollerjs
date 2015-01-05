@@ -44,6 +44,11 @@
     position: relative;
     overflow: hidden;
 }
+.scroller-wrapper.native {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .scroller-wrapper .accesibiliy-enabled {
     overflow: auto;
 }
@@ -99,6 +104,7 @@
     text-align: center;
     line-height: 50px;
 }
+
 .pullToLoadMore {
     -webkit-transform: translate3d(0, 0, 0);
     -moz-transform: translate3d(0, 0, 0);
