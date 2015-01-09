@@ -1550,10 +1550,20 @@
             }
         },
         _nativeScroll: function (e) {
-            this.x = this.wrapper.scrollLeft;
-            this.y = this.wrapper.scrollTop;
-            this._fire(ACTION_SCROLL_MOVE, ACTION_SCROLL, this.x, this.y);
+            var x = -this.wrapper.scrollLeft,
+                y = -this.wrapper.scrollTop;
+
+            this._fire(ACTION_SCROLL_MOVE, ACTION_SCROLL, x, y);
+
+            this.distX = x - this.x;
+            this.distY = y - this.y;
+
+            this._isScrolling = true;
             this._update();
+
+            this.x = x;
+            this.y = y;
+            this._isScrolling = false;
         },
 
         /**
