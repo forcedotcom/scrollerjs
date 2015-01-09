@@ -24,8 +24,17 @@
         RAF      = w.requestAnimationFrame,
         Logger   = SCROLLER.Logger,
         INITIAL_SURFACES = 10;
-    
+
+        
     function SurfaceManager() {}
+
+    SurfaceManager.matrixTransform = function (x, y) {
+        return 'matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,' + x +',' + y + ', 0, 1)';
+    };
+
+    SurfaceManager.translateTransform = function (x, y) {
+        return 'translate3d(' + x +'px,' + y + 'px, 0)';
+    };
 
     SurfaceManager.prototype = {
         /* Bootstrap function */
@@ -39,11 +48,24 @@
             this.on('destroy', this._destroySurfaceManager);
         },
         _initializeSurfaceManager: function () {
+            this._initTransformFunction();
             this._bootstrapItems();
             this._initializeSurfaces();
             this._setActiveOffset();
             this._initializePositions();
             this._setInfiniteScrollerSize();
+            this._setWrapperState();
+
+        },
+        _initTransformFunction: function () {
+            this._transformFnc = this.opts.useNativeScroller ? SurfaceManager.translateTransform : SurfaceManager.matrixTransform;
+        },
+        _setWrapperState: function () {
+            if (this.opts.useNativeScroller) {
+                // Using native scroller, we dont need the "scroller" div anymore
+                this.wrapper.removeChild(this.scroller);
+            }
+
         },
         _destroySurfaceManager: function () {
             var docfrag = w.document.createDocumentFragment();
@@ -161,7 +183,7 @@
                 offsetX = config.preCalculateSize ?  offset - width : offset;
             }
             
-            surface.dom.style[STYLES.transform] = 'matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,' + offsetX +',' + offsetY + ', 0, 1)';
+            surface.dom.style[STYLES.transform] = this._transformFnc(offsetX, offsetY);
 
             surface.state       = 1;
             surface.contentIndex = index;
@@ -185,6 +207,7 @@
         },
         _attachSurfaces: function (surfaces) {
             var docfrag = w.document.createDocumentFragment(),
+                target  = this.opts.useNativeScroller ? this.wrapper : this.scroller,
                 surface, i;
 
             for (i = 0 ; i < surfaces.length; i++) {
@@ -193,7 +216,7 @@
                 this.surfacesPool.push(surface);
             }
 
-            this.scroller.appendChild(docfrag);
+            target.appendChild(docfrag);
         },
         _getAvailableSurface: function () {
             var pool = this.surfacesPool,
@@ -478,7 +501,7 @@
 
             if (surface) {
                 diff = spaceBottom ? this.wrapperHeight : bottomOffset;
-                surface.style[STYLES.transform] = 'matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,0,' + diff + ', 0, 1)';
+                surface.style[STYLES.transform] = this._transformFnc(0, diff);
             }
         },
         _appendPullToLoad: function () {

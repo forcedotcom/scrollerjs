@@ -75,16 +75,6 @@
     text-size-adjust: none;
 }
 
-.scroll-horizontal {
-    -ms-touch-action: pan-x;
-    touch-action: pan-x;
-}
-
-.scroll-vertical {
-    -ms-touch-action: pan-y;
-    touch-action: pan-y;
-}
-
 .scroll-vertical, .scroll-vertical .surface {
     width: 100%;
 }
