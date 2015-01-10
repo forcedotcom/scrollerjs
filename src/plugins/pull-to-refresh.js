@@ -21,6 +21,8 @@
     var SCROLLER = w.__S || (w.__S = {}),
         RAF      = w.requestAnimationFrame,
         PLUGINS  = SCROLLER.plugins || (SCROLLER.plugins = {}),
+        HELPERS  = SCROLLER.helpers,
+        SUPPORT  = SCROLLER.support,
 
         CONFIG_DEFAULTS = {
             labelPull     : 'Pull down to refresh...',
@@ -44,9 +46,10 @@
     PullToRefresh.prototype = {
         init: function () {
             this._mergePullToRefreshConfig();
-            this.on('_initialize', this._appendPullToRefresh);
+            this.on('_initialize', this._initializePullToRefresh);
             this.on('scrollMove', this._onScrollMovePTR);
             this.on('_customResetPosition', this._onResetPositionPTR);
+            this.on('destroy', this._destroyPTR);
         },
         _mergePullToRefreshConfig: function () {
             this.opts.pullToRefreshConfig = this._mergeConfigOptions(CONFIG_DEFAULTS, this.opts.pullToRefreshConfig);
@@ -65,6 +68,33 @@
             ptr_container.className = 'pullToRefresh';
 
             return ptr_container;
+        },
+        _initializePullToRefresh: function () {
+            var nativePTR = this._nativePTR = this.opts.useNativeScroller && SUPPORT.iOS;
+            if (nativePTR) {
+                this._bindTouchEventsIOS();
+            }
+
+            this._appendPullToRefresh();
+        },
+        _destroyPTR: function () {
+            // We may want to destroy the touchEvents in case of iOS?
+            // altough all modern browsers do the right thing here...
+        },
+        // If useNativeScroller is enabled, we want to build
+        _bindTouchEventsIOS: function () {
+            var self = this;
+            HELPERS.bind(this.wrapper, 'touchstart', function (e) {
+                self._iosTouching = true;
+            });
+
+            HELPERS.bind(this.wrapper, 'touchend', function (e) {
+                self._iosTouching = false;
+                self.getResetPositionPTR();
+                self._triggerPTRAfterReset = false;
+                self.triggerPTR();
+            });
+            
         },
         _appendPullToRefresh: function () {
             var ptr_container = this._createPullToRefreshMarkup();
@@ -96,11 +126,13 @@
         _setPTRLoadingState: function (enable) {
             if (enable) {
                 this.ptrDOM.classList.add(CLASS_UPDATE_STATE);
+                this._nativePTR && (this.ptrDOM.style.position = 'static');
                 this.ptrLabel.textContent = this.opts.pullToRefreshConfig.labelUpdate;
                 this._ptrLoading          = true;
             } else {
                 this.ptrDOM.classList.remove(CLASS_UPDATE_STATE);
                 this.ptrDOM.classList.remove(CLASS_PULL_STATE);
+                this._nativePTR && (this.ptrDOM.style.position = '');
                 this.ptrLabel.textContent = this.opts.pullToRefreshConfig.labelPull;
                 this._ptrLoading = false;
             }
@@ -129,7 +161,8 @@
             }
         },
         _onScrollMovePTR: function (action, x, y) {
-            if (action === 'gestureMove' && y > 0) {
+            var touching = action === 'gestureMove' || this._iosTouching;
+            if (touching && y > 0) {
                 this._needsPullToRefresh(y);
             }
         },

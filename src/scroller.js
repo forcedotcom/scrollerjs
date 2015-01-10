@@ -22,12 +22,6 @@
         RAF            = w.requestAnimationFrame,
         CAF            = w.cancelAnimationFrame,
 
-    // iOS Feature detection
-        NAV            = w.navigator, // For testing, we dont want to mock navigator for all tests
-        IOS            = NAV && NAV.userAgent && NAV.userAgent.match(/iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/),
-        IS_IOS         = !!IOS,
-        IOS_SCROLL     = IOS && IOS[1] >= 8,
-
     // NAMESPACES
         SCROLLER       = w.__S || {},
         PLUGINS        = SCROLLER.plugins,
@@ -36,6 +30,9 @@
         STYLES         = SCROLLER.styles,
         CubicBezier    = SCROLLER.CubicBezier,
         Logger         = SCROLLER.Logger,
+
+        // iOS Feature detection
+        IS_IOS         = SUPPORT.iOS,
 
         /*
         * For the sake of simplicity, these action-string

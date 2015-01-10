@@ -28,17 +28,14 @@
 
         #wrapper {
             position: absolute;
-            z-index: 1;
             top: 45px;
             bottom: 40px;
             left: 0;
             width: 100%;
             background: #ccc;
             background-color: rgb(240, 241, 242);
-            overflow: hidden;
             padding-top: 14px;
         }
-
 
         .footer {
             width: 100%;
@@ -175,8 +172,8 @@
 
         <!-- ============================ SCROLLER =========================== -->
 
-<div id="wrapper">
-    <div id="scroller" style="background-color: #f0f1f2">
+<div id="wrapper" class="scroller-wrapper">
+    <div id="scroller" class="scroller scroll-vertical" style="background-color: #f0f1f2" >
         <!-- <section class="feed clear"> -->
         <!-- </section> -->
         <article class="mam bg-1 brm border border--3">
@@ -293,21 +290,23 @@
                 }, 1500);
             }
 
-        document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
-
         window.addEventListener('load', function (e) {
             window.scrollerConfig = {
                 '// Description': 'Uses PullToRefresh and PullToLoadMore plugin to load more data',
-                disableMouse    : false,
-                infiniteLoading : false,
+                //disableMouse    : false,
                 pullToRefresh   : true,
-                pullToLoadMore  : true,
-                useCSSTransition: true,
-                lockOnDirection : 'horizontal',
                 onPullToRefresh : ptr,
-                onPullToLoadMore: ptr,
-                scrollbars      : false,
+                // pullToLoadMore  : true,
+                useNativeScroller: true,
+                // useCSSTransition: true,
+                
+                // onPullToLoadMore: ptr,
             };
+
+            if (!scrollerConfig.useNativeScroller) {
+                document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+            }
+
             window.scroller = new Scroller('#wrapper', scrollerConfig);
             
         });
