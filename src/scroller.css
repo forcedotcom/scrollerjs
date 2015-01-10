@@ -94,6 +94,7 @@
     text-align: center;
     line-height: 50px;
     overflow:hidden;
+    z-index: 100;
 }
 
 .pullToLoadMore {

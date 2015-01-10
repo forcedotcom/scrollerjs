@@ -21,6 +21,7 @@
     var SCROLLER = w.__S || (w.__S = {}),
         RAF      = w.requestAnimationFrame,
         PLUGINS  = SCROLLER.plugins || (SCROLLER.plugins = {}),
+        STYLES   = SCROLLER.styles,
         HELPERS  = SCROLLER.helpers,
         SUPPORT  = SCROLLER.support,
 
@@ -97,11 +98,13 @@
             
         },
         _appendPullToRefresh: function () {
-            var ptr_container = this._createPullToRefreshMarkup();
-            if (this.scroller.firstChild) {
-                this.scroller.insertBefore(ptr_container, this.scroller.firstChild);
+            var ptr_container = this._createPullToRefreshMarkup(),
+                target        = SUPPORT.wp ? this.wrapper : this.scroller;
+
+            if (target.firstChild) {
+                target.insertBefore(ptr_container, target.firstChild);
             } else {
-                this.scroller.appendChild(ptr_container);
+                target.appendChild(ptr_container);
             }
 
             this.ptrDOM   = ptr_container;
@@ -110,6 +113,11 @@
 
             this._ptrThreshold  = ptr_container.offsetHeight; //relayout
             this._ptrSnapTime   = PULL_TO_SNAP_TIME;
+
+            if (SUPPORT.wp) {
+                this.scroller.style.paddingTop = this._ptrThreshold + 'px';
+                this.wrapper.scrollTop = this._ptrThreshold;
+            }
 
             this.togglePullToRefresh(this.opts.pullToRefresh, true);
         },
@@ -162,8 +170,15 @@
         },
         _onScrollMovePTR: function (action, x, y) {
             var touching = action === 'gestureMove' || this._iosTouching;
+
             if (touching && y > 0) {
-                this._needsPullToRefresh(y);
+                return this._needsPullToRefresh(y);
+            }
+
+            if (SUPPORT.wp) { 
+                if (y > -this._ptrThreshold) {
+                    this.ptrDOM.style[STYLES.transform] = 'translate3d(0,' + (50 + y) + 'px,0)';
+                }
             }
         },
         _needsPullToRefresh: function (ypos) {
