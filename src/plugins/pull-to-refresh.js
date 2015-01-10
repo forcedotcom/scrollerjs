@@ -72,6 +72,7 @@
         },
         _initializePullToRefresh: function () {
             var nativePTR = this._nativePTR = this.opts.useNativeScroller && SUPPORT.isIOS;
+
             if (nativePTR) {
                 this._bindTouchEventsIOS();
             }
@@ -97,6 +98,7 @@
             });
             
         },
+        //TODO: FIX clicking for PTR
         _appendPullToRefresh: function () {
             var ptr_container = this._createPullToRefreshMarkup(),
                 target        = SUPPORT.isWP ? this.wrapper : this.scroller;
@@ -170,11 +172,9 @@
         },
         _onScrollMovePTR: function (action, x, y) {
             var touching = action === 'gestureMove' || this._iosTouching;
-
             if (touching && y > 0) {
                 return this._needsPullToRefresh(y);
             }
-
             if (SUPPORT.isWP) { 
                 if (y > -this._ptrThreshold) {
                     this.ptrDOM.style[STYLES.transform] = 'translate3d(0,' + (50 + y) + 'px,0)';

@@ -94,9 +94,10 @@
         pointers    : w.navigator.pointerEnabled,
         msPointers  : w.navigator.msPointerEnabled,
         touchScroll : IOS_SCROLL,
-        isIOS       : IS_IOS,
-        //isAndroid   : undefined,
-        isWP        : IS_WP
+        isWP        : IS_WP,
+        isIOS       : !IS_WP && IS_IOS,
+        //isAndroid   : !IS_WP && IS_ANDROID, //not needed yet
+        
     };
 
 }(window));
