@@ -32,7 +32,7 @@
         Logger         = SCROLLER.Logger,
 
         // iOS Feature detection
-        IS_IOS         = SUPPORT.iOS,
+        IS_IOS         = SUPPORT.isIOS,
 
         /*
         * For the sake of simplicity, these action-string

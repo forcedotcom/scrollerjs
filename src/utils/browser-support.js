@@ -93,9 +93,10 @@
         touch       : 'ontouchstart' in w,
         pointers    : w.navigator.pointerEnabled,
         msPointers  : w.navigator.msPointerEnabled,
-        iOS         : IS_IOS,
         touchScroll : IOS_SCROLL,
-        wp          : IS_WP
+        isIOS       : IS_IOS,
+        //isAndroid   : undefined,
+        isWP        : IS_WP
     };
 
 }(window));

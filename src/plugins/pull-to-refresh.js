@@ -71,7 +71,7 @@
             return ptr_container;
         },
         _initializePullToRefresh: function () {
-            var nativePTR = this._nativePTR = this.opts.useNativeScroller && SUPPORT.iOS;
+            var nativePTR = this._nativePTR = this.opts.useNativeScroller && SUPPORT.isIOS;
             if (nativePTR) {
                 this._bindTouchEventsIOS();
             }
@@ -99,7 +99,7 @@
         },
         _appendPullToRefresh: function () {
             var ptr_container = this._createPullToRefreshMarkup(),
-                target        = SUPPORT.wp ? this.wrapper : this.scroller;
+                target        = SUPPORT.isWP ? this.wrapper : this.scroller;
 
             if (target.firstChild) {
                 target.insertBefore(ptr_container, target.firstChild);
@@ -114,7 +114,7 @@
             this._ptrThreshold  = ptr_container.offsetHeight; //relayout
             this._ptrSnapTime   = PULL_TO_SNAP_TIME;
 
-            if (SUPPORT.wp) {
+            if (SUPPORT.isWP) {
                 this.scroller.style.paddingTop = this._ptrThreshold + 'px';
                 this.wrapper.scrollTop = this._ptrThreshold;
             }
@@ -175,7 +175,7 @@
                 return this._needsPullToRefresh(y);
             }
 
-            if (SUPPORT.wp) { 
+            if (SUPPORT.isWP) { 
                 if (y > -this._ptrThreshold) {
                     this.ptrDOM.style[STYLES.transform] = 'translate3d(0,' + (50 + y) + 'px,0)';
                 }
