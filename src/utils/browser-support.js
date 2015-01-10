@@ -44,6 +44,15 @@
     var SCROLLER = w.__S || (w.__S = {}),
         DOCUMENT_STYLE = w.document.documentElement.style,
         VENDORS  = ['webkit', 'Moz', 'ms'],
+        NAV      = w.navigator, // For testing, we dont want to mock navigator for all tests
+        UA       = NAV && NAV.userAgent,
+
+        // iOS Feature detection
+        IOS            = UA && UA.match(/iP(?:hone|ad;(?: U;)? CPU) OS (\d+)/),
+        WP             = UA && UA.match(/Windows Phone (?:OS[ /])?(\d+)\.(\d+)/),
+        IS_IOS         = !!IOS,
+        IS_WP          = !!WP,
+        IOS_SCROLL     = IOS && IOS[1] >= 8,
 
         supportTransition = false,
         supportTransform  = false,
@@ -77,13 +86,17 @@
     }
 
     SCROLLER.support = {
-        prefix     : prefix,
-        transition : supportTransition,
-        transform  : supportTransform,
-        matrix     : !!(w.WebKitCSSMatrix || w.MSCSSMatrix),
-        touch      : 'ontouchstart' in w,
-        pointers   : w.navigator.pointerEnabled,
-        msPointers : w.navigator.msPointerEnabled
+        prefix      : prefix,
+        transition  : supportTransition,
+        transform   : supportTransform,
+        matrix      : !!(w.WebKitCSSMatrix || w.MSCSSMatrix),
+        touch       : 'ontouchstart' in w,
+        pointers    : w.navigator.pointerEnabled,
+        msPointers  : w.navigator.msPointerEnabled,
+        touchScroll : IOS_SCROLL,
+        isIOS       : IS_IOS,
+        //isAndroid   : undefined,
+        isWP        : IS_WP
     };
 
 }(window));

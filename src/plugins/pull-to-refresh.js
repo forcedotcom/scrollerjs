@@ -21,6 +21,9 @@
     var SCROLLER = w.__S || (w.__S = {}),
         RAF      = w.requestAnimationFrame,
         PLUGINS  = SCROLLER.plugins || (SCROLLER.plugins = {}),
+        STYLES   = SCROLLER.styles,
+        HELPERS  = SCROLLER.helpers,
+        SUPPORT  = SCROLLER.support,
 
         CONFIG_DEFAULTS = {
             labelPull     : 'Pull down to refresh...',
@@ -44,9 +47,10 @@
     PullToRefresh.prototype = {
         init: function () {
             this._mergePullToRefreshConfig();
-            this.on('_initialize', this._appendPullToRefresh);
+            this.on('_initialize', this._initializePullToRefresh);
             this.on('scrollMove', this._onScrollMovePTR);
             this.on('_customResetPosition', this._onResetPositionPTR);
+            this.on('destroy', this._destroyPTR);
         },
         _mergePullToRefreshConfig: function () {
             this.opts.pullToRefreshConfig = this._mergeConfigOptions(CONFIG_DEFAULTS, this.opts.pullToRefreshConfig);
@@ -66,12 +70,41 @@
 
             return ptr_container;
         },
+        _initializePullToRefresh: function () {
+            var nativePTR = this._nativePTR = this.opts.useNativeScroller && SUPPORT.isIOS;
+            if (nativePTR) {
+                this._bindTouchEventsIOS();
+            }
+
+            this._appendPullToRefresh();
+        },
+        _destroyPTR: function () {
+            // We may want to destroy the touchEvents in case of iOS?
+            // altough all modern browsers do the right thing here...
+        },
+        // If useNativeScroller is enabled, we want to build
+        _bindTouchEventsIOS: function () {
+            var self = this;
+            HELPERS.bind(this.wrapper, 'touchstart', function (e) {
+                self._iosTouching = true;
+            });
+
+            HELPERS.bind(this.wrapper, 'touchend', function (e) {
+                self._iosTouching = false;
+                self.getResetPositionPTR();
+                self._triggerPTRAfterReset = false;
+                self.triggerPTR();
+            });
+            
+        },
         _appendPullToRefresh: function () {
-            var ptr_container = this._createPullToRefreshMarkup();
-            if (this.scroller.firstChild) {
-                this.scroller.insertBefore(ptr_container, this.scroller.firstChild);
+            var ptr_container = this._createPullToRefreshMarkup(),
+                target        = SUPPORT.isWP ? this.wrapper : this.scroller;
+
+            if (target.firstChild) {
+                target.insertBefore(ptr_container, target.firstChild);
             } else {
-                this.scroller.appendChild(ptr_container);
+                target.appendChild(ptr_container);
             }
 
             this.ptrDOM   = ptr_container;
@@ -80,6 +113,11 @@
 
             this._ptrThreshold  = ptr_container.offsetHeight; //relayout
             this._ptrSnapTime   = PULL_TO_SNAP_TIME;
+
+            if (SUPPORT.isWP) {
+                this.scroller.style.paddingTop = this._ptrThreshold + 'px';
+                this.wrapper.scrollTop = this._ptrThreshold;
+            }
 
             this.togglePullToRefresh(this.opts.pullToRefresh, true);
         },
@@ -96,11 +134,13 @@
         _setPTRLoadingState: function (enable) {
             if (enable) {
                 this.ptrDOM.classList.add(CLASS_UPDATE_STATE);
+                this._nativePTR && (this.ptrDOM.style.position = 'static');
                 this.ptrLabel.textContent = this.opts.pullToRefreshConfig.labelUpdate;
                 this._ptrLoading          = true;
             } else {
                 this.ptrDOM.classList.remove(CLASS_UPDATE_STATE);
                 this.ptrDOM.classList.remove(CLASS_PULL_STATE);
+                this._nativePTR && (this.ptrDOM.style.position = '');
                 this.ptrLabel.textContent = this.opts.pullToRefreshConfig.labelPull;
                 this._ptrLoading = false;
             }
@@ -129,8 +169,16 @@
             }
         },
         _onScrollMovePTR: function (action, x, y) {
-            if (action === 'gestureMove' && y > 0) {
-                this._needsPullToRefresh(y);
+            var touching = action === 'gestureMove' || this._iosTouching;
+
+            if (touching && y > 0) {
+                return this._needsPullToRefresh(y);
+            }
+
+            if (SUPPORT.isWP) { 
+                if (y > -this._ptrThreshold) {
+                    this.ptrDOM.style[STYLES.transform] = 'translate3d(0,' + (50 + y) + 'px,0)';
+                }
             }
         },
         _needsPullToRefresh: function (ypos) {
