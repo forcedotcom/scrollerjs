@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 (function (w) {
     'use strict';
     w || (w = window);
     
     var SCROLLER = w.__S || (w.__S = {}), //NAMESPACE
         PLUGINS  = SCROLLER.plugins || (SCROLLER.plugins = {}),
+        SUPPORT  = SCROLLER.support,
         STYLES   = SCROLLER.styles,
         HELPERS  = SCROLLER.helpers,
         RAF      = w.requestAnimationFrame,
@@ -205,7 +207,7 @@
             surface.dom.removeChild(surface.dom.firstChild);
             
         },
-        _attachSurfaces: function (surfaces) {
+        _attachSurfaces: function (surfaces, ignorePool) {
             var docfrag = w.document.createDocumentFragment(),
                 target  = this.opts.useNativeScroller ? this.wrapper : this.scroller,
                 surface, i;
@@ -213,7 +215,9 @@
             for (i = 0 ; i < surfaces.length; i++) {
                 surface = surfaces[i];
                 docfrag.appendChild(surface.dom);
-                this.surfacesPool.push(surface);
+                if (!ignorePool) {
+                    this.surfacesPool.push(surface);
+                }
             }
 
             target.appendChild(docfrag);
@@ -246,6 +250,18 @@
                 surfaces    = this._createSurfaces(numSurfaces);
 
             this._attachSurfaces(surfaces);
+            this._attachTrackSurface();
+        },
+        _attachTrackSurface: function () {
+            var wpSurface = this._createSurface();
+                wpSurface.dom.style.cssText = 'width:100%;height:1px;opacity:0';
+                wpSurface.dom.classList.add('max-size-tracker');
+                this._sizeTrackSurface = wpSurface;
+                // Add this surface to the dom, but not to the pool for being used
+                this._attachSurfaces([wpSurface], true/*ignorePool*/);
+
+                this.lastTrackSizeX = 0;
+                this.lastTrackSizeY = 0; 
         },
         _resetSurfaces: function () {
             var surfaces      = this.surfacesPositioned,
@@ -255,6 +271,19 @@
             for (var i = 0; i < surfacesCount; i++) {
                 surface = surfaces.shift();
                 this._dettachItemInSurface(surface);
+            }
+        },
+        _updateOffset: function () {
+            var last     = this._positionedSurfacesLast(),
+                vertical = this.scrollVertical,
+                offset   = last.offset + (vertical ? last.height : last.width),
+                x        = vertical ? 0 : offset,
+                y        = vertical && offset;
+
+            if (this._sizeTrackSurface && (x > this.lastTrackSizeX || y > this.lastTrackSizeY )) {
+                this.lastTrackSizeX = x;
+                this.lastTrackSizeY = y; 
+                this._sizeTrackSurface.dom.style[STYLES.transform] = 'translate3d('+ x + 'px,'+ y + 'px,0)';
             }
         },
         _mod: function (index) {
@@ -410,6 +439,7 @@
                         bottomSurface    = surface;
                         bottomSurfaceEnd = bottomSurface.offset;
                         yieldTask        = true;
+                        this._updateOffset();
                     }
                 }
                 

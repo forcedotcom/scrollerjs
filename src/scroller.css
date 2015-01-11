@@ -45,7 +45,7 @@
     overflow: hidden;
 }
 .scroller-wrapper.native {
-    overflow: auto;
+    overflow: scroll;
     -webkit-overflow-scrolling: touch;
 }
 
