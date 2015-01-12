@@ -64,8 +64,12 @@
         },
         _setWrapperState: function () {
             if (this.opts.useNativeScroller) {
+                var ptr = this.opts.pullToRefresh && this.opts.pullToRefreshConfig;
                 // Using native scroller, we dont need the "scroller" div anymore
                 this.wrapper.removeChild(this.scroller);
+                if (ptr && ptr.type === 'native') {
+                    this.scrollTo(0, -this.getPTRSize());
+                }
             }
 
         },

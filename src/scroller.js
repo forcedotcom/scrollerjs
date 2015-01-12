@@ -1380,12 +1380,15 @@
         * @protected
         */
         _translate: function (x, y) {
-            
-            // TODO: We use translate3d here due to a bug in compositing layers on iOS 8.1.x
-            // Revert this back once the bug is fixed.
-            // this.scrollerStyle[STYLES.transform] = 'matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,' + x +',' + y +', 0, 1)';
+            if (!this.opts.useNativeScroller) {
+                // TODO: We use translate3d here due to a bug in compositing layers on iOS 8.1.x
+                // Revert this back once the bug is fixed.
+                // this.scrollerStyle[STYLES.transform] = 'matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,' + x +',' + y +', 0, 1)';
+                this.scrollerStyle[STYLES.transform] = 'translate3d(' + x +'px,' + y +'px, 0)';    
+            } else {
+                this._wrapperScrollTo(x, y);
+            }
 
-            this.scrollerStyle[STYLES.transform] = 'translate3d(' + x +'px,' + y +'px, 0)';
             this.x = x;
             this.y = y;
         },
@@ -1527,9 +1530,9 @@
         _scrollTo: function (x, y, time, easing) {
             easing || (easing = EASING.regular);
 
-            if (this.opts.useNativeScroller) {
-                return this._wrapperScrollTo(x,y);
-            }
+            // if (this.opts.useNativeScroller) {
+            //     return this._wrapperScrollTo(x,y, time, easing.fn);
+            // }
 
             if (!time || this.opts.useCSSTransition) {
                 this._transitionEasing(easing.style);
