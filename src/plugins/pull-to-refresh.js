@@ -27,9 +27,9 @@
 
         // Enum of the types of PTR (pullToRefresh) we support:
         PTR_TYPE = {
-            synthetic: 'synthetic', // The default PTR built in the scroller
-            native   : 'native', // PTR done for nativeScrolling (adds some special logic)
-            ios      : 'ios', // In iOS we can leverage the momentum and snap to do native PTR
+            'synthetic': 'synthetic', // The default PTR built in the scroller
+            'native'   : 'native', // PTR done for nativeScrolling (adds some special logic)
+            'ios'      : 'ios' // In iOS we can leverage the momentum and snap to do native PTR
         },
         CONFIG_DEFAULTS = {
             labelPull     : 'Pull down to refresh...',
@@ -38,7 +38,7 @@
             labelUpdate   : 'Updating...',
             labelSubtitle : '',
             labelError    : 'Error on pull to refresh',
-            type          : undefined, // TBD at instanciation type from PTR_TYPE
+            type          : undefined // TBD at instanciation type from PTR_TYPE
         },
         PULL_TO_SNAP_TIME  = 200,
         ERROR_TIMEOUT      = 1000,
@@ -71,7 +71,7 @@
                 return PTR_TYPE.ios;
             } else {
                 this._nativePTR = true;
-                return PTR_TYPE.native;
+                return PTR_TYPE['native'];
             }
         },
         _mergePullToRefreshConfig: function () {

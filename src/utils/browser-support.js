@@ -102,7 +102,7 @@
         touchScroll : IOS_SCROLL,
         isWP        : IS_WP, // (See note above about accuracy)
         isIOS       : IS_IOS, // (See note above about accuracy)
-        isAndroid   : IS_ANDROID, // (See note above about accuracy)
+        isAndroid   : IS_ANDROID // (See note above about accuracy)
     };
 
 }(window));
