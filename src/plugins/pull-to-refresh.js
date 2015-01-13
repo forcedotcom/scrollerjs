@@ -108,6 +108,8 @@
         _initializePullToRefresh: function () {
             if (this._iosPTR) {
                 this._bindTouchEventsIOS();
+            } else if (this._nativePTR) {
+                this.on('_refresh', this._onRefreshPTR);
             }
 
             this._appendPullToRefresh();
@@ -167,6 +169,12 @@
                 this._scrollTo(0, y, time);
             } else {
                 this._resetPosition(time, true);
+            }
+        },
+        _onRefreshPTR: function () {
+            var pos = this.y;
+            if (pos === 0 && !this._ptrLoading) {
+                this.scrollTo(0, this.getPTRSize());
             }
         },
         _setPTRLoadingState: function (enable) {
