@@ -444,10 +444,12 @@
             this.scroller      = this.wrapper.children[0];
             this.scrollerStyle = this.scroller.style;
 
+            var scrollDirection = this.scrollVertical ? 'scroll-vertical' : 'scroll-horizontal';
+
             // Add default classes
             this.scroller.classList.add('scroller');
             this.wrapper.classList.add('scroller-wrapper');
-            this.scroller.classList.add( this.scrollVertical ? 'scroll-vertical' : 'scroll-horizontal');
+            this.wrapper.classList.add(scrollDirection);
 
             if (this.opts.useNativeScroller) {
                 this.wrapper.classList.add('native');

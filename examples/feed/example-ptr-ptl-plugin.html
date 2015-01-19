@@ -553,13 +553,14 @@
                 '// Description': 'Uses PullToRefresh and PullToLoadMore plugin to load more data',
                 //disableMouse    : false,
                 pullToRefresh   : true,
-                onPullToRefresh : ptr,
-                // pullToLoadMore  : true,
+                 onPullToRefresh : ptr,
+                pullToLoadMore  : true,
+                onPullToLoadMore: ptr,
                 useNativeScroller: true,
                 gpuOptimization: true,
-                // useCSSTransition: true,
+                //useCSSTransition: true,
                 
-                // onPullToLoadMore: ptr,
+                // 
             };
 
             if (!scrollerConfig.useNativeScroller) {

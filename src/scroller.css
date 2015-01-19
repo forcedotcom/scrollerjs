@@ -75,10 +75,10 @@
     text-size-adjust: none;
 }
 
-.scroll-vertical, .scroll-vertical .surface {
+.scroll-vertical .scroller, .scroll-vertical .surface {
     width: 100%;
 }
-.scroll-horizontal, .scroll-horizontal .surface {
+.scroll-horizontal .scroller, .scroll-horizontal .surface {
     height: 100%;
 }
 
@@ -103,6 +103,7 @@
     -ms-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
     height: 50px;
+    width: 100%;
     text-align: center;
     line-height: 50px;
 }
