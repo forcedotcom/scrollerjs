@@ -579,7 +579,7 @@
 
             if (this.opts.useNativeScroller) {
                 eventType(wrapper, 'scroll', this);
-                if (IS_IOS) {
+                if (IS_IOS && !this.opts.pullToRefresh) {
                     eventType(wrapper, 'touchstart', function (e) {self._iosScrollFixture.apply(self, arguments);});
                 }
                 return;

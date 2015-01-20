@@ -246,7 +246,7 @@
 
         },
         _emptyScroller: function () {
-            return !(this.opts.pullToLoadMore ? this.items.length - 1 : this.items.length);
+            return !this.getNumItems();
         },
         _initializeSurfaces: function () {
             var items       = this.items,
@@ -398,6 +398,12 @@
         },
         _updateSurfaceManager: function () {
             if (this._emptyScroller() || !this.surfacesPositioned.length) {
+                // This is a corner case when the list is empty and we add items to it
+                // We dont have surfacesPosition so we initialize them here
+                if (this.getNumItems() > 0) {
+                    this._initializePositions();
+                    this._setInfiniteScrollerSize();
+                }
                 return;
             }
 
@@ -496,14 +502,18 @@
                 lastPos    = ptlEnabled ? positioned.length - 3 : positioned.length - 1,
                 last       = positioned[lastPos],
                 itemsSize  = this.opts.pullToLoadMore ? items.length - 1 : items.length,
-                itemsLeft, offset, ptrSize;
+                itemsLeft  = 0, 
+                offset     = 0, 
+                ptrSize;
 
             if (positioned.length <= 0) {
                 return;
             }
 
-            itemsLeft = last.contentIndex < itemsSize - (ptlEnabled ? 2 : 1);
-            offset    = last.offset + (this.scrollVertical ? last.height : last.width);
+            if (last) {
+                itemsLeft = last.contentIndex < itemsSize - (ptlEnabled ? 2 : 1);
+                offset    = last.offset + (this.scrollVertical ? last.height : last.width);
+            }
 
             if (this.scrollVertical) {
                 this.maxScrollY = itemsLeft ? Number.NEGATIVE_INFINITY : size - offset;
@@ -594,6 +604,9 @@
                 this.items.push(spacer);
                 this.items.push(ptl);
             }
+        },
+        getNumItems: function () {
+            return this.opts.pullToRefresh  ? this.items.length - 2 : this.items.length;
         },
         prependItems: function (items) {
             var parsedData = HELPERS.parseDOM(items);
