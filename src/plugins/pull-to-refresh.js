@@ -65,6 +65,7 @@
         _getPTRType: function () {
             var nativeScroller = this.opts.useNativeScroller;
             if (!nativeScroller) {
+                this._synthPTR = true;
                 return PTR_TYPE.synthetic;
             } else if (SUPPORT.isIOS) {
                 this._iosPTR = true;
@@ -108,6 +109,7 @@
         _initializePullToRefresh: function () {
             if (this._iosPTR) {
                 this._bindTouchEventsIOS();
+                this.on('_refresh', this._onRefreshPTR);
             } else if (this._nativePTR) {
                 this.on('_refresh', this._onRefreshPTR);
             }
@@ -130,15 +132,20 @@
                     self.getResetPositionPTR();
                     self._triggerPTRAfterReset = false;
                     self.triggerPTR();
+                    return;
                 }
+
+                // if (self.wrapper.scrollTop < self.getPTRSize()) {
+                //     //self.scrollTo(0, -self.getPTRSize(), 300);
+                // }
             });
             
         },
         //TODO: FIX clicking for PTR
         _appendPullToRefresh: function () {
             var ptr_container = this._createPullToRefreshMarkup(),
-                isPTRNative   = this._nativePTR,
-                onWrapper     = (isPTRNative || this._iosPTR) && this.opts.gpuOptimization,
+                nonSynthetic  = !this._synthPTR,
+                onWrapper     = nonSynthetic && this.opts.gpuOptimization,
                 target        = onWrapper ? this.wrapper : this.scroller;
 
             if (target.firstChild) {
@@ -154,9 +161,11 @@
             this._ptrSize     = ptr_container.offsetHeight; //relayout
             this._ptrSnapTime = PULL_TO_SNAP_TIME;
 
-            if (isPTRNative) {
+            if (nonSynthetic) {
                 this.ptrDOM.style.position = 'relative';
-                this.wrapper.scrollTop = this._ptrSize;
+                if (this._iosPTR) {
+                    this.ptrDOM.style.top = 0;
+                }
             }
 
             this.togglePullToRefresh(this.opts.pullToRefresh, true);
@@ -166,7 +175,7 @@
                 var y    = this._getPTRSize();
 
                 time = time || this._getPTRSnapTime();
-                this._scrollTo(0, y, time);
+                this.scrollTo(0, y, time);
             } else {
                 this._resetPosition(time, true);
             }
@@ -187,18 +196,12 @@
                 this.ptrDOM.classList.add(CLASS_UPDATE_STATE);
                 this.ptrLabel.textContent = updateLabel;
                 this._ptrLoading = true;
-
-                if (this._iosPTR) {
-                    this.ptrDOM.style.position = 'static';
-                }
             } else {
                 this.ptrDOM.classList.remove(CLASS_UPDATE_STATE);
                 this.ptrDOM.classList.remove(CLASS_PULL_STATE);
                 this.ptrLabel.textContent = actionLabel;
                 this._ptrLoading = false;
-                if (this._iosPTR) {
-                    this.ptrDOM.style.position = '';
-                } else if (this._nativePTR) {
+                if (!this._synthPTR) {
                     this.scrollTo(0, -this.getPTRSize(), 300);
                 }
             }
@@ -230,20 +233,27 @@
             var touching    = action === 'gestureMove' || this._iosTouching,
                 isPTRNative = this._nativePTR;
 
-            if (touching && y > 0) {
+            if (touching) {
                 return this._needsPullToRefresh(y);
             }
 
-            if (isPTRNative) { 
-                if (y > -this._ptrSize) {
-                    this.ptrDOM.style[STYLES.transform] = 'translate3d(0,' + (50 + y) + 'px,0)';
+            if (isPTRNative) {
+                var ptrSize = this.getPTRSize();
+                if (y > -ptrSize) {
+                    var offset = y > 0 ? ptrSize : ptrSize + y;
+                    this.ptrDOM.style[STYLES.transform] = 'translate3d(0,' + offset + 'px,0)';
                 }
             }
         },
         _needsPullToRefresh: function (ypos) {
-            if (this._ptrTriggered && ypos < this._ptrSize) {
+            var ptrSize = this.getPTRSize(),
+                offset = this._iosPTR ? 0: ptrSize,
+                backThreshold = ypos < offset,
+                pullThreshold = ypos > offset;
+
+            if (this._ptrTriggered && backThreshold) {
                 this._setPullState(false);
-            } else if (!this._ptrTriggered && ypos > this._ptrSize) {
+            } else if (!this._ptrTriggered && pullThreshold) {
                 this._setPullState(true);
             }
         },

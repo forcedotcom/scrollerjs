@@ -1552,6 +1552,18 @@
             }
         },
         _nativeScroll: function (e) {
+            if (SUPPORT.isIOS) {
+                this._nativeScrollIOS(e);
+            } else {
+                this._nativeScrollRAF(e);
+            }
+        },
+        _nativeScrollIOS: function (e) {
+            if (!this._rafNativeScroll) {
+                this._rafNativeScroll = RAF(this._nativeScrollRAF.bind(this));
+            }
+        },
+        _nativeScrollRAF: function () {
             var x = -this.wrapper.scrollLeft,
                 y = -this.wrapper.scrollTop;
 
@@ -1566,6 +1578,7 @@
             this.x = x;
             this.y = y;
             this._isScrolling = false;
+            this._rafNativeScroll = false;
         },
 
         /**

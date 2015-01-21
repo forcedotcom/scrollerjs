@@ -67,7 +67,7 @@
                 var ptr = this.opts.pullToRefresh && this.opts.pullToRefreshConfig;
                 // Using native scroller, we dont need the "scroller" div anymore
                 this.wrapper.removeChild(this.scroller);
-                if (ptr && ptr.type === 'native') {
+                if (ptr && ptr.type !== 'synthetic') {
                     this.scrollTo(0, -this.getPTRSize());
                 }
             }
@@ -122,6 +122,9 @@
                 sizeNotCover  = heightSum < sizeNeeded;
                 positioned[i] = surface;
             }
+
+            // TODO: do this for vertical scrolling
+            this._updateSurfaceSizeTracker(0, this.scrollVertical ? heightSum : 0);
         },
         
         _createSurfaceDOM: function (options, domContent) {
@@ -284,6 +287,9 @@
                 x        = vertical ? 0 : offset,
                 y        = vertical && offset;
 
+            this._updateSurfaceSizeTracker(x, y);
+        },
+        _updateSurfaceSizeTracker: function (x, y) {
             if (this._sizeTrackSurface && (x > this.lastTrackSizeX || y > this.lastTrackSizeY )) {
                 this.lastTrackSizeX = x;
                 this.lastTrackSizeY = y; 
@@ -407,6 +413,7 @@
 
             var self             = this,
                 current          = this._getPosition(),
+                nativeScroller   = this.opts.useNativeScroller,
                 boundaries       = this._getBoundaries(current.pos, current.size),
                 itemsLeft        = this._itemsLeft('bottom'),
                 // surfaces
@@ -428,7 +435,7 @@
             // AND there is no more items to swap
             // AND the scroll position is beyond the scrollable area (+ 1/4 of the size)
             // THEN: RESET POSITION
-            if (this._isScrolling && !itemsLeft && current.pos < (current.maxScroll - (current.size / 4))) {
+            if (!nativeScroller && this._isScrolling && !itemsLeft && current.pos < (current.maxScroll - (current.size / 4))) {
                 this._isAnimating  = false;
                 this._isScrolling  = false;
                 this._stopMomentum();
