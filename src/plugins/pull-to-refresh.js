@@ -121,31 +121,38 @@
             // altough all modern browsers do the right thing here...
         },
         _bindTouchEventsIOS: function () {
-            var self = this;
+            this.on('scrollEnd', this._onScrollEndPTR);
+
             HELPERS.bind(this.wrapper, 'touchstart', function (e) {
-                self._iosTouching = true;
-            });
+                if (this.y >= 0) {
+                    this._start(e);
+                    this.forceTranslate = true;
+                }
+            }.bind(this));
+
+            HELPERS.bind(this.wrapper, 'touchmove', function (e) {
+                var point = e.touches ? e.touches[0] : e,
+                    x     = point.pageX - this.pointX,
+                    y     = point.pageY - this.pointY;
+
+                if (this._iosTouching || (y > 0 && this.scroller.scrollTop === 0)) {
+                    e.preventDefault();
+                    this._iosTouching = true;
+                    e.preventDefault();
+                    this._move(e);
+                }
+            }.bind(this));
 
             HELPERS.bind(this.wrapper, 'touchend', function (e) {
-                self._iosTouching = false;
-                if (self._ptrTriggered) {
-                    self.getResetPositionPTR();
-                    self._triggerPTRAfterReset = false;
-                    self.triggerPTR();
-                    return;
-                }
-
-                // if (self.wrapper.scrollTop < self.getPTRSize()) {
-                //     //self.scrollTo(0, -self.getPTRSize(), 300);
-                // }
-            });
+                this._iosTouching = false;
+                this._end(e);
+            }.bind(this));
             
         },
         //TODO: FIX clicking for PTR
         _appendPullToRefresh: function () {
             var ptr_container = this._createPullToRefreshMarkup(),
-                nonSynthetic  = !this._synthPTR,
-                onWrapper     = nonSynthetic && this.opts.gpuOptimization,
+                onWrapper     = this._iosPTR,
                 target        = onWrapper ? this.wrapper : this.scroller;
 
             if (target.firstChild) {
@@ -161,11 +168,9 @@
             this._ptrSize     = ptr_container.offsetHeight; //relayout
             this._ptrSnapTime = PULL_TO_SNAP_TIME;
 
-            if (nonSynthetic) {
+            if (this._nativePTR) {
                 this.ptrDOM.style.position = 'relative';
-                if (this._iosPTR) {
-                    this.ptrDOM.style.top = 0;
-                }
+                this.scrollTo(0, this.getPTRSize());
             }
 
             this.togglePullToRefresh(this.opts.pullToRefresh, true);
@@ -183,7 +188,7 @@
         _onRefreshPTR: function () {
             var pos = this.y;
             if (pos === 0 && !this._ptrLoading) {
-                this.scrollTo(0, this.getPTRSize());
+                this.scrollTo(0, -this.getPTRSize());
             }
         },
         _setPTRLoadingState: function (enable) {
@@ -201,7 +206,7 @@
                 this.ptrDOM.classList.remove(CLASS_PULL_STATE);
                 this.ptrLabel.textContent = actionLabel;
                 this._ptrLoading = false;
-                if (!this._synthPTR) {
+                if (this._nativePTR) {
                     this.scrollTo(0, -this.getPTRSize(), 300);
                 }
             }
@@ -230,33 +235,36 @@
             }
         },
         _onScrollMovePTR: function (action, x, y) {
-            var touching    = action === 'gestureMove' || this._iosTouching,
+            var touching    = action === 'gestureMove',
                 isPTRNative = this._nativePTR;
 
-            if (touching) {
+            if (this._iosPTR && y > 0) {
+                this.ptrDOM.style[STYLES.transform] = 'translate3d(0,' + (y) + 'px,0)';
+            }
+
+            if (touching && y > 0) {
                 return this._needsPullToRefresh(y);
             }
 
-            if (isPTRNative) {
-                var ptrSize = this.getPTRSize();
-                if (y > -ptrSize) {
-                    var offset = y > 0 ? ptrSize : ptrSize + y;
-                    this.ptrDOM.style[STYLES.transform] = 'translate3d(0,' + offset + 'px,0)';
-                }
+            if (isPTRNative) { 
+                if (y > -this._ptrSize) {
+                    this.ptrDOM.style[STYLES.transform] = 'translate3d(0,' + (50 + y) + 'px,0)';
+                }   
+            }
+        },
+        _onScrollEndPTR: function (e) {
+            if (this._iosPTR && !this._ptrTriggered) {
+                this.forceTranslate = false;
             }
         },
         _needsPullToRefresh: function (ypos) {
-            var ptrSize = this.getPTRSize(),
-                offset = this._iosPTR ? 0: ptrSize,
-                backThreshold = ypos < offset,
-                pullThreshold = ypos > offset;
-
-            if (this._ptrTriggered && backThreshold) {
+            if (this._ptrTriggered && ypos < this._ptrSize) {
                 this._setPullState(false);
-            } else if (!this._ptrTriggered && pullThreshold) {
+            } else if (!this._ptrTriggered && ypos > this._ptrSize) {
                 this._setPullState(true);
             }
         },
+
         _ptrToggle: function (action, force) {
             var ptr = this.ptrDOM;
 

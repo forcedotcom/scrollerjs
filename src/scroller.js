@@ -464,9 +464,15 @@
         * @private
         */
         _setWrapperSize: function () {
+            var oldSize        = this.wrapperSize;
             this.wrapperWidth  = this.wrapper.clientWidth;
             this.wrapperHeight = this.wrapper.clientHeight;
             this.wrapperSize   = this.scrollVertical ? this.wrapperHeight : this.wrapperWidth;
+
+            if (this.opts.useNativeScroller && oldSize !== this.wrapperSize) {
+                this.scroller.style.height = this.wrapperSize + 'px';
+            }
+            
         },
         /**
         * Sets the overall sizes of the scroller.
@@ -551,8 +557,8 @@
         * @private
         */
         _iosScrollFixture: function (e) {
-            if (this.wrapper.scrollTop === 0) {
-                this.wrapper.scrollTop = 1;
+            if (this.scroller.scrollTop === 0) {
+                this.scroller.scrollTop = 1;
             }
         },
         /**
@@ -578,8 +584,8 @@
             }
 
             if (this.opts.useNativeScroller) {
-                eventType(wrapper, 'scroll', this);
-                if (IS_IOS) {
+                eventType(this.scroller, 'scroll', this);
+                if (IS_IOS && !this.opts.pullToRefresh) {
                     eventType(wrapper, 'touchstart', function (e) {self._iosScrollFixture.apply(self, arguments);});
                 }
                 return;
@@ -1382,7 +1388,7 @@
         * @protected
         */
         _translate: function (x, y) {
-            if (!this.opts.useNativeScroller) {
+            if (!this.opts.useNativeScroller || this.forceTranslate) {
                 // TODO: We use translate3d here due to a bug in compositing layers on iOS 8.1.x
                 // Revert this back once the bug is fixed.
                 // this.scrollerStyle[STYLES.transform] = 'matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,' + x +',' + y +', 0, 1)';
@@ -1560,14 +1566,14 @@
         },
         _nativeScrollIOS: function (e) {
             if (!this._rafNativeScroll) {
-                this._rafNativeScroll = RAF(this._nativeScrollRAF.bind(this));
+                this._rafNativeScroll = RAF(this._nativeScrollRAF.bind(this, e));
             }
         },
-        _nativeScrollRAF: function () {
-            var x = -this.wrapper.scrollLeft,
-                y = -this.wrapper.scrollTop;
+        _nativeScrollRAF: function (e) {
+            var x = -this.scroller.scrollLeft,
+                y = -this.scroller.scrollTop;
 
-            this._fire(ACTION_SCROLL_MOVE, ACTION_SCROLL, x, y);
+            this._fire(ACTION_SCROLL_MOVE, ACTION_SCROLL, x, y, e);
 
             this.distX = x - this.x;
             this.distY = y - this.y;
@@ -1592,8 +1598,8 @@
          * TODO: Integrate with open source scroller in 196
          */
         _wrapperScrollTo: function(x, y) {
-               this.wrapper.scrollTop = this.scrollVertical ? Math.abs(y) : this.wrapper.scrollTop;
-               this.wrapper.scrollLeft = this.scrollVertical ? this.wrapper.scrollLeft : Math.abs(x);
+               this.scroller.scrollTop = this.scrollVertical ? Math.abs(y) : this.scroller.scrollTop;
+               this.scroller.scrollLeft = this.scrollVertical ? this.scroller.scrollLeft : Math.abs(x);
         },
 
         /**

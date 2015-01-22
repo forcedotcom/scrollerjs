@@ -44,7 +44,11 @@
     position: relative;
     overflow: hidden;
 }
-.scroller-wrapper.native {
+.scroller-wrapper.native .scroller {
+    position: absolute;
+    top:0;
+    bottom: 0;
+    width:100%;
     overflow: scroll;
     -webkit-overflow-scrolling: touch;
 }
@@ -94,7 +98,6 @@
     text-align: center;
     line-height: 50px;
     overflow:hidden;
-    z-index: 100;
 }
 
 .pullToLoadMore {

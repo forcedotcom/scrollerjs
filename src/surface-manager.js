@@ -65,9 +65,7 @@
         _setWrapperState: function () {
             if (this.opts.useNativeScroller) {
                 var ptr = this.opts.pullToRefresh && this.opts.pullToRefreshConfig;
-                // Using native scroller, we dont need the "scroller" div anymore
-                this.wrapper.removeChild(this.scroller);
-                if (ptr && ptr.type !== 'synthetic') {
+                if (ptr && ptr.type === 'native') {
                     this.scrollTo(0, -this.getPTRSize());
                 }
             }
@@ -85,7 +83,8 @@
             this.surfacesPositioned = [];
         },
         _bootstrapItems: function () {
-            var skipPtr  = this.opts.pullToRefresh ? 1 : 0,
+            var ptr      = this.opts.pullToRefresh && this.opts.pullToRefreshConfig,
+                skipPtr  = ptr && ptr.type !== 'ios' ? 1 : 0, // this means ptr is outside the container
                 domItems = Array.prototype.slice.call(this.scroller.children, skipPtr),
                 size     = domItems.length,
                 items    = [],
@@ -216,7 +215,7 @@
         },
         _attachSurfaces: function (surfaces, ignorePool) {
             var docfrag = w.document.createDocumentFragment(),
-                target  = this.opts.useNativeScroller ? this.wrapper : this.scroller,
+                target  = this.scroller,
                 surface, i;
 
             for (i = 0 ; i < surfaces.length; i++) {
