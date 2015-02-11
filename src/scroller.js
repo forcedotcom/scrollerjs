@@ -98,6 +98,16 @@
         SCROLL_HORIZONTAL = 'horizontal',
 
         /**
+        * Identifies horizontal scrolling.
+        *
+        * @property SCROLL_BIDIRECTIONAL
+        * @type String
+        * @static
+        * @final
+        */
+        SCROLL_BIDIRECTIONAL = 'bidirectional',
+
+        /**
         * Configuration object for the MutatorObserver
         *
         * @property MUTATOR_OBSERVER_CONFIG
@@ -427,6 +437,10 @@
                 this.opts.pullToRefresh  = false;
                 this.opts.pullToLoadMore = false;
             }
+
+            if (this.opts.scroll === SCROLL_BIDIRECTIONAL) {
+                this.opts.debounce = false;
+            }
         },
         /**
         * Finds the DOM element where the scroller will be hosted. 
@@ -444,7 +458,8 @@
             this.scroller      = this.wrapper.children[0];
             this.scrollerStyle = this.scroller.style;
 
-            var scrollDirection = this.scrollVertical ? 'scroll-vertical' : 'scroll-horizontal';
+            var scrollDirection = this.scroll === SCROLL_BIDIRECTIONAL ? 'scroll-bidirectional' : 
+                                  this.scrollVertical ? 'scroll-vertical' : 'scroll-horizontal';
 
             // Add default classes
             this.scroller.classList.add('scroller');
@@ -910,6 +925,11 @@
                 (absY > absX + treshold) ? SCROLL_VERTICAL :
                 null;
 
+            // lock one direction at the time on bidirectional mode
+            if (this.scrollDirection && this.opts.lockOnDirection && this.scroll === SCROLL_BIDIRECTIONAL) {
+                this.scrollVertical = this.scrollDirection === SCROLL_VERTICAL;
+            }
+
             return this.scrollDirection;
         },
 
@@ -935,12 +955,13 @@
         * @private
         */
         _setNormalizedXY: function (x, y) {
-            if (this.scrollVertical) {
-                this.x = 0;
+            if (!this.opts.lockOnDirection && this.scroll === SCROLL_BIDIRECTIONAL) {
+                this.x = x;
+                this.y = y;
+            } else if (this.scrollVertical) {
                 this.y = y;
             } else {
                 this.x = x;
-                this.y = 0;
             }
         },
         /**
@@ -1052,10 +1073,16 @@
             // Calculate the momentum {destination, time} based on the gesture
             if (this.scrollVertical) {
                 momentum = this._momentum(this.y, this.startY, duration, this.maxScrollY, this.wrapperHeight);
-                this._scrollTo(0, momentum.destination, momentum.time, momentum.bounce);
+                this._scrollTo(this.x, momentum.destination, momentum.time, momentum.bounce);
+            } else if (this.scroll === SCROLL_BIDIRECTIONAL) {
+                var momentumX = this._momentum(this.x, this.startX, duration, this.maxScrollX, this.wrapperWidth);
+                var momentumY = this._momentum(this.y, this.startY, duration, this.maxScrollY, this.wrapperHeight);
+
+                this._scrollTo(momentumX.destination, momentumY.destination, Math.max(momentumX.time, momentumY.time), momentumX.bounce);
+                
             } else {
                 momentum = this._momentum(this.x, this.startX, duration, this.maxScrollX, this.wrapperWidth);
-                this._scrollTo(momentum.destination, 0, momentum.time, momentum.bounce);
+                this._scrollTo(momentum.destination, this.y, momentum.time, momentum.bounce);
             }
         },
 

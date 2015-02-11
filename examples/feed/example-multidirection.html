@@ -1,0 +1,334 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ScrollerJS - MultiDirection</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
+        
+        <!-- DEVELOPER SCROLLERJS EXAMPLE -->
+        <!--USE GRUNT TO PRODUCTIONIZE YOUR SCROLLER, DO NOT DO THIS IN YOUR PRODUCTION APPLICATION -->
+
+        <!-- SCROLLER BOOTSTRAP -->
+        <script src="../../src/utils/bootstrap.js"></script>
+        <script src="../../src/utils/bootstrap-debug.js"></script>
+        <script src="../../src/utils/browser-support.js"></script>
+        <script src="../../src/utils/browser-styles.js"></script>
+        <script src="../../src/utils/helpers.js"></script>
+        <script src="../../src/utils/raf.js"></script>
+        <script src="../../src/utils/class-list.js"></script>
+        <script src="../../src/utils/cubic-bezier.js"></script>
+        <!-- SCROLLER CORE -->
+        <script src="../../src/scroller.js"></script>
+        <script src="../../src/surface-manager.js"></script>
+        <link href="../../src/scroller.css" rel="stylesheet" type="text/css">
+
+        <!-- CUSTOM STYLES -->
+        <link href="assets/styles.css" rel="stylesheet" type="text/css">        
+        <style>
+            .CSSTableGenerator {
+                margin:0px;padding:0px;
+                width:2000px;
+                box-shadow: 10px 10px 5px #888888;
+                border:1px solid #000000;
+                
+                -moz-border-radius-bottomleft:0px;
+                -webkit-border-bottom-left-radius:0px;
+                border-bottom-left-radius:0px;
+                
+                -moz-border-radius-bottomright:0px;
+                -webkit-border-bottom-right-radius:0px;
+                border-bottom-right-radius:0px;
+                
+                -moz-border-radius-topright:0px;
+                -webkit-border-top-right-radius:0px;
+                border-top-right-radius:0px;
+                
+                -moz-border-radius-topleft:0px;
+                -webkit-border-top-left-radius:0px;
+                border-top-left-radius:0px;
+            }.CSSTableGenerator table{
+                border-collapse: collapse;
+                    border-spacing: 0;
+                width:100%;
+                height:100%;
+                margin:0px;padding:0px;
+            }.CSSTableGenerator tr:last-child td:last-child {
+                -moz-border-radius-bottomright:0px;
+                -webkit-border-bottom-right-radius:0px;
+                border-bottom-right-radius:0px;
+            }
+            .CSSTableGenerator table tr:first-child td:first-child {
+                -moz-border-radius-topleft:0px;
+                -webkit-border-top-left-radius:0px;
+                border-top-left-radius:0px;
+            }
+            .CSSTableGenerator table tr:first-child td:last-child {
+                -moz-border-radius-topright:0px;
+                -webkit-border-top-right-radius:0px;
+                border-top-right-radius:0px;
+            }.CSSTableGenerator tr:last-child td:first-child{
+                -moz-border-radius-bottomleft:0px;
+                -webkit-border-bottom-left-radius:0px;
+                border-bottom-left-radius:0px;
+            }.CSSTableGenerator tr:hover td{
+                
+            }
+            .CSSTableGenerator tr:nth-child(odd){ background-color:#ffaa56; }
+            .CSSTableGenerator tr:nth-child(even)    { background-color:#ffffff; }.CSSTableGenerator td{
+                vertical-align:middle;
+                
+                
+                border:1px solid #000000;
+                border-width:0px 1px 1px 0px;
+                text-align:left;
+                padding:7px;
+                font-size:10px;
+                font-family:Arial;
+                font-weight:normal;
+                color:#000000;
+            }.CSSTableGenerator tr:last-child td{
+                border-width:0px 1px 0px 0px;
+            }.CSSTableGenerator tr td:last-child{
+                border-width:0px 0px 1px 0px;
+            }.CSSTableGenerator tr:last-child td:last-child{
+                border-width:0px 0px 0px 0px;
+            }
+            .CSSTableGenerator tr:first-child td{
+                    background:-o-linear-gradient(bottom, #ff7f00 5%, #bf5f00 100%);    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff7f00), color-stop(1, #bf5f00) );
+                background:-moz-linear-gradient( center top, #ff7f00 5%, #bf5f00 100% );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff7f00", endColorstr="#bf5f00");  background: -o-linear-gradient(top,#ff7f00,bf5f00);
+
+                background-color:#ff7f00;
+                border:0px solid #000000;
+                text-align:center;
+                border-width:0px 0px 1px 1px;
+                font-size:14px;
+                font-family:Arial;
+                font-weight:bold;
+                color:#ffffff;
+            }
+            .CSSTableGenerator tr:first-child:hover td{
+                background:-o-linear-gradient(bottom, #ff7f00 5%, #bf5f00 100%);    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff7f00), color-stop(1, #bf5f00) );
+                background:-moz-linear-gradient( center top, #ff7f00 5%, #bf5f00 100% );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff7f00", endColorstr="#bf5f00");  background: -o-linear-gradient(top,#ff7f00,bf5f00);
+
+                background-color:#ff7f00;
+            }
+            .CSSTableGenerator tr:first-child td:first-child{
+                border-width:0px 0px 1px 0px;
+            }
+            .CSSTableGenerator tr:first-child td:last-child{
+                border-width:0px 0px 1px 1px;
+            }  
+
+            #container {
+                position: absolute;
+                z-index: 1;
+                top: 45px;
+                bottom: 30px;
+                left: 0;
+                width: 100%;
+                background: #ccc;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -moz-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                -moz-box-align: center;
+                -ms-flex-align: center;
+                align-items: center;
+                -webkit-box-pack: center;
+                -webkit-justify-content: center;
+                -moz-box-pack: center;
+                -ms-flex-pack: center;
+                justify-content: center;
+            }
+
+            #wrapper {
+                width: 310px;
+                height: 310px;
+                border: 1px dashed black;
+                background-color: #f0f1f2;
+                padding-top: 14px;
+            }
+
+            .footer {
+                width: 100%;
+                height: 40px;
+                position: absolute;
+                bottom: 0;
+                background-color: #293f54;
+            }
+
+        </style>
+    </head>
+
+<body>
+
+<!-- ==================================== HEADER =================================== -->
+    <section class="sg-phone--header ht-44 clear">
+        <header class="bg-global-header ht-44 dropglow-1" role="group">
+            <ul class="fl man pan list-horizontal ht-44">
+                <li class="pos-rel fl ht-44">
+                    <a href="javascript:void(0)" title="Main Page" class="phm ht-44 pam">
+                        <span class="active--icon-1 text-color-5 icon-utility-rows"></span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="fr man pan list-horizontal ht-44">
+                 <li class="pos-rel fl ht-44">
+                    <a id="up" href="javascript:void(0)" title="Open in a new window" style="display:none" class="phm ht-44 pam">
+                        <span class="icon-utility-up active--icon-1 text-color-5">
+                        </span>
+                    </a>
+                 </li>
+                 <script>
+                    (function (w) {
+                        var open = document.getElementById('up');
+                        function inIframe () {try {return window.self !== window.top;} catch (e) {return true;}}
+                        if (inIframe()) {
+                            open.style.display = 'block';
+                            open.addEventListener('click', function (e) {
+                                window.open(window.location, '_blank');
+                            }, false);
+                        }
+                    }(window));
+
+                 </script>
+                 
+                 <li class="pos-rel fl ht-44">
+                    <a id="s-config" href="javascript:void(0)" title="Configuration" class="phm ht-44 pam">
+                        <span class="icon-utility-question active--icon-1 text-color-5">
+                        </span>
+                    </a>
+                 </li>
+            </ul>
+        </header>
+        <aside id="config-popup" class="modal-popup">
+            <div class="popup mam bg-1 brm border border--3">
+                <h5 class="bg-3 pam mbm">Scroller Configuration</h5>
+                <div class="mam">
+                    <pre class="cfg">
+                    </pre>
+                </div>
+            </div>
+        </aside>
+        <script>
+            (function (w) {
+                var help   = document.getElementById('s-config'),
+                    popup  = document.getElementById('config-popup'),
+                    close  = true,
+                    render = false,
+                    hide   = function (e) {
+                        e.preventDefault();
+                        if (!close) {
+                            popup.style.display = 'none';
+                            close = true;
+                        }
+                    },
+                    show   = function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (!render) {
+                            popup.querySelector('.cfg').innerHTML = JSON.stringify(window.scrollerConfig, null, '  ');
+                            render = true;
+                        }
+                        popup.style.display = 'block';
+                        close = false;
+                    };
+
+                popup.addEventListener('click', hide, false);
+                popup.addEventListener('pointerUp', hide, false);
+                popup.addEventListener('touchend', hide, false);
+
+                help.addEventListener('click', show, false);
+                help.addEventListener('pointerUp', show, false);
+                help.addEventListener('touchend', show, false);
+
+            }(window));
+        </script>
+    </section>
+
+<!-- ==================================== BODY ==================================== -->
+<section id="container">
+<div id="wrapper">
+    <div id="scroller" style="background-color: #f0f1f2">
+        <div class="CSSTableGenerator" >
+                <table >
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
+                  <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
+                  <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
+                  <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
+                  <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
+                  <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
+                  <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
+                  <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
+                  <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
+                  <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
+                  <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
+                  <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
+                  <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
+                  <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
+                  <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
+                  <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
+                  <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
+                  <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
+                  <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
+                  <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
+                  <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
+                  <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
+                  <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
+                  <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
+                  <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
+                </table>
+            </div>
+            </br>
+    </div>
+</div>
+</section>
+<!-- ==================================== FOOTER =================================== -->
+
+<section class="footer">
+    <span>ScrollerJS | useCSSTransition</span>
+</section>
+
+<!-- ============================ SCROLLER INITIALIZATION =========================== -->
+
+<script>
+    // Prevents viewport bouncing iOS
+    document.addEventListener('touchmove', function (e) {e.preventDefault();}, false);
+
+    var scrollerConfig = {
+        scroll : 'bidirectional',
+        lockOnDirection: true
+    };
+
+    window.addEventListener('load', function () {
+        window.scroller = new Scroller('#wrapper', scrollerConfig);
+    });
+
+</script>
+</body>
+</html>
