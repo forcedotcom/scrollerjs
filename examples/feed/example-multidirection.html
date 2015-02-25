@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>ScrollerJS - MultiDirection</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
-        
+
         <!-- DEVELOPER SCROLLERJS EXAMPLE -->
         <!--USE GRUNT TO PRODUCTIONIZE YOUR SCROLLER, DO NOT DO THIS IN YOUR PRODUCTION APPLICATION -->
 
@@ -19,30 +19,31 @@
         <script src="../../src/utils/cubic-bezier.js"></script>
         <!-- SCROLLER CORE -->
         <script src="../../src/scroller.js"></script>
+        <script src="../../src/plugins/pull-to-refresh.js"></script>
         <script src="../../src/surface-manager.js"></script>
         <link href="../../src/scroller.css" rel="stylesheet" type="text/css">
 
         <!-- CUSTOM STYLES -->
-        <link href="assets/styles.css" rel="stylesheet" type="text/css">        
+        <link href="assets/styles.css" rel="stylesheet" type="text/css">
         <style>
             .CSSTableGenerator {
                 margin:0px;padding:0px;
                 width:2000px;
                 box-shadow: 10px 10px 5px #888888;
                 border:1px solid #000000;
-                
+
                 -moz-border-radius-bottomleft:0px;
                 -webkit-border-bottom-left-radius:0px;
                 border-bottom-left-radius:0px;
-                
+
                 -moz-border-radius-bottomright:0px;
                 -webkit-border-bottom-right-radius:0px;
                 border-bottom-right-radius:0px;
-                
+
                 -moz-border-radius-topright:0px;
                 -webkit-border-top-right-radius:0px;
                 border-top-right-radius:0px;
-                
+
                 -moz-border-radius-topleft:0px;
                 -webkit-border-top-left-radius:0px;
                 border-top-left-radius:0px;
@@ -71,13 +72,13 @@
                 -webkit-border-bottom-left-radius:0px;
                 border-bottom-left-radius:0px;
             }.CSSTableGenerator tr:hover td{
-                
+
             }
             .CSSTableGenerator tr:nth-child(odd){ background-color:#ffaa56; }
             .CSSTableGenerator tr:nth-child(even)    { background-color:#ffffff; }.CSSTableGenerator td{
                 vertical-align:middle;
-                
-                
+
+
                 border:1px solid #000000;
                 border-width:0px 1px 1px 0px;
                 text-align:left;
@@ -119,7 +120,7 @@
             }
             .CSSTableGenerator tr:first-child td:last-child{
                 border-width:0px 0px 1px 1px;
-            }  
+            }
 
             #container {
                 position: absolute;
@@ -198,7 +199,7 @@
                     }(window));
 
                  </script>
-                 
+
                  <li class="pos-rel fl ht-44">
                     <a id="s-config" href="javascript:void(0)" title="Configuration" class="phm ht-44 pam">
                         <span class="icon-utility-question active--icon-1 text-color-5">
@@ -322,7 +323,11 @@
 
     var scrollerConfig = {
         scroll : 'bidirectional',
-        lockOnDirection: true
+        lockOnDirection: true,
+        pullToRefresh: true,
+        plugins: [
+            'PullToRefresh'
+        ]
     };
 
     window.addEventListener('load', function () {
