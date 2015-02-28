@@ -98,7 +98,7 @@
         SCROLL_HORIZONTAL = 'horizontal',
 
         /**
-        * Identifies horizontal scrolling.
+        * Identifies bidirectional scrolling.
         *
         * @property SCROLL_BIDIRECTIONAL
         * @type String
@@ -419,7 +419,8 @@
 
             this.acceleration          = opts.acceleration || ACCELERATION_CONSTANT;
             this.scrollVertical        = this.scroll === SCROLL_VERTICAL;
-            
+            this.scrollHorizontal      = this.scroll === SCROLL_HORIZONTAL;
+
             // Guard for missconfigurations
 
             if (opts.infiniteLoading && opts.pullToLoadMore) {
@@ -429,7 +430,7 @@
                 this.opts.pullToLoadMore = false;
             }
 
-            if (!this.scrollVertical && (opts.pullToRefresh || opts.pullToLoadMore)) {
+            if (this.scrollHorizontal && (opts.pullToRefresh || opts.pullToLoadMore)) {
                 Logger.log(
                     'The attributes: pullToRefresh or pullToShowMore are not available in horizontal mode yet.'+
                     ' Switching them to false');
@@ -1126,7 +1127,7 @@
             wheelDeltaX *= invertWheelDirection;
             wheelDeltaY *= invertWheelDirection;
 
-            if (!this.scrollVertical) {
+            if (this.scrollHorizontal) {
                 wheelDeltaX = wheelDeltaY;
                 wheelDeltaY = 0;
             }

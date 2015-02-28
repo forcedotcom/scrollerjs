@@ -8,10 +8,9 @@ A JavaScript library that helps you build performant UI components for the web.
 - Video + Slides: [Velocity 2014: GPU and Web UI performance: Building an Endless 60fps Scroller](https://www.youtube.com/watch?v=VAOPi9C8674])
 - Examples: [http://scrollerjs.com#playground](http://scrollerjs.com#playground)
 
-Instrucctions
+Instructions
 =============
 Under construction...
 
 ## License
 See the file [LICENSE](https://github.com/forcedotcom/scrollerjs/blob/master/LICENSE)
-
