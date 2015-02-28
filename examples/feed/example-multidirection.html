@@ -29,9 +29,6 @@
             .CSSTableGenerator {
                 margin:0px;padding:0px;
                 width:2000px;
-                box-shadow: 10px 10px 5px #888888;
-                border:1px solid #000000;
-
                 -moz-border-radius-bottomleft:0px;
                 -webkit-border-bottom-left-radius:0px;
                 border-bottom-left-radius:0px;
@@ -67,18 +64,18 @@
                 -moz-border-radius-topright:0px;
                 -webkit-border-top-right-radius:0px;
                 border-top-right-radius:0px;
-            }.CSSTableGenerator tr:last-child td:first-child{
+            }
+            .CSSTableGenerator tr:last-child td:first-child{
                 -moz-border-radius-bottomleft:0px;
                 -webkit-border-bottom-left-radius:0px;
                 border-bottom-left-radius:0px;
-            }.CSSTableGenerator tr:hover td{
+            }
+            .CSSTableGenerator tr:hover td{
 
             }
             .CSSTableGenerator tr:nth-child(odd){ background-color:#ffaa56; }
-            .CSSTableGenerator tr:nth-child(even)    { background-color:#ffffff; }.CSSTableGenerator td{
+            .CSSTableGenerator tr:nth-child(even){ background-color:#ffffff; }.CSSTableGenerator td{
                 vertical-align:middle;
-
-
                 border:1px solid #000000;
                 border-width:0px 1px 1px 0px;
                 text-align:left;
@@ -94,7 +91,7 @@
             }.CSSTableGenerator tr:last-child td:last-child{
                 border-width:0px 0px 0px 0px;
             }
-            .CSSTableGenerator tr:first-child td{
+            .CSSTableGenerator thead tr:first-child td{
                     background:-o-linear-gradient(bottom, #ff7f00 5%, #bf5f00 100%);    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff7f00), color-stop(1, #bf5f00) );
                 background:-moz-linear-gradient( center top, #ff7f00 5%, #bf5f00 100% );
                 filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff7f00", endColorstr="#bf5f00");  background: -o-linear-gradient(top,#ff7f00,bf5f00);
@@ -108,17 +105,17 @@
                 font-weight:bold;
                 color:#ffffff;
             }
-            .CSSTableGenerator tr:first-child:hover td{
+            .CSSTableGenerator thead tr:first-child:hover td{
                 background:-o-linear-gradient(bottom, #ff7f00 5%, #bf5f00 100%);    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff7f00), color-stop(1, #bf5f00) );
                 background:-moz-linear-gradient( center top, #ff7f00 5%, #bf5f00 100% );
                 filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff7f00", endColorstr="#bf5f00");  background: -o-linear-gradient(top,#ff7f00,bf5f00);
 
                 background-color:#ff7f00;
             }
-            .CSSTableGenerator tr:first-child td:first-child{
+            .CSSTableGenerator thead tr:first-child td:first-child{
                 border-width:0px 0px 1px 0px;
             }
-            .CSSTableGenerator tr:first-child td:last-child{
+            .CSSTableGenerator thead tr:first-child td:last-child{
                 border-width:0px 0px 1px 1px;
             }
 
@@ -152,7 +149,6 @@
                 height: 310px;
                 border: 1px dashed black;
                 background-color: #f0f1f2;
-                padding-top: 14px;
             }
 
             .footer {
@@ -259,18 +255,10 @@
     <div id="scroller" style="background-color: #f0f1f2">
         <div class="CSSTableGenerator" >
                 <table >
+                    <thead>
                   <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
-                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
-                  <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
-                  <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
-                  <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
-                  <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
-                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
-                  <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
-                  <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
-                  <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
-                  <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
-                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  </thead>
+                  <tbody>
                   <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
                   <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
                   <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
@@ -303,9 +291,20 @@
                   <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
                   <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
                   <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
+                  <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
+                  <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
+                  <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
+                  <tr><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td><td>Row 1</td></tr>
+                  <tr><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td><td>Row 2</td></tr>
+                  <tr><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td><td>Row 3</td></tr>
+                  <tr><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td><td>Row 4</td></tr>
+                  <tr><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td><td>Row 5</td></tr>
+                  </tbody>
                 </table>
             </div>
-            </br>
     </div>
 </div>
 </section>
@@ -324,9 +323,9 @@
     var scrollerConfig = {
         scroll : 'bidirectional',
         lockOnDirection: true,
-        pullToRefresh: true,
+        pullToRefresh: false,
         plugins: [
-            'PullToRefresh'
+            // 'PullToRefresh'
         ]
     };
 
