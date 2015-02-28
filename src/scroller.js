@@ -1075,15 +1075,16 @@
             if (this.scrollVertical) {
                 momentum = this._momentum(this.y, this.startY, duration, this.maxScrollY, this.wrapperHeight);
                 this._scrollTo(this.x, momentum.destination, momentum.time, momentum.bounce);
-            } else if (this.scroll === SCROLL_BIDIRECTIONAL) {
-                var momentumX = this._momentum(this.x, this.startX, duration, this.maxScrollX, this.wrapperWidth);
-                var momentumY = this._momentum(this.y, this.startY, duration, this.maxScrollY, this.wrapperHeight);
 
-                this._scrollTo(momentumX.destination, momentumY.destination, Math.max(momentumX.time, momentumY.time), momentumX.bounce);
-                
-            } else {
+            } else if (this.scrollHorizontal) {
                 momentum = this._momentum(this.x, this.startX, duration, this.maxScrollX, this.wrapperWidth);
                 this._scrollTo(momentum.destination, this.y, momentum.time, momentum.bounce);
+            } else {
+                // Bidirectional
+                var momentumX = this._momentum(this.x, this.startX, duration, this.maxScrollX, this.wrapperWidth),
+                    momentumY = this._momentum(this.y, this.startY, duration, this.maxScrollY, this.wrapperHeight);
+
+                this._scrollTo(momentumX.destination, momentumY.destination, Math.max(momentumX.time, momentumY.time), momentumX.bounce);
             }
         },
 
