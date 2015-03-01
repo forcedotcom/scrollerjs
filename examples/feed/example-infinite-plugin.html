@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>ScrollerJS - PullToRefresh & PullToLoadMore</title>
+        <title>ScrollerJS - Infinite Plugin</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
 
         <script src="../../src/utils/bootstrap.js"></script>
@@ -20,6 +20,7 @@
         <script src="../../src/plugins/pull-to-load-more.js"></script>
         <script src="../../src/plugins/endless-plugin.js"></script>
         <script src="../../src/plugins/indicators-plugin.js"></script>
+        <script src="../../src/plugins/infinite-loading.js"></script>
 
         <link href="assets/styles.css" rel="stylesheet" type="text/css">
         <link href="assets/icons.css" rel="stylesheet" type="text/css">
@@ -543,22 +544,33 @@
                 setTimeout(function () {
                     var div = document.createElement('div'),
                         feedTmpl = document.getElementById('feed-type-01').textContent;
+                        for (var i = 0 ; i < 3; i++) {
+                            feedTmpl+=feedTmpl;
+                        }
                         div.innerHTML = (feedTmpl);
-                        callback(null, div.children);
-                }, 1500);
+                        callback(null, Array.prototype.slice.call(div.children));
+                }, 600);
             }
 
         window.addEventListener('load', function (e) {
             window.scrollerConfig = {
                 '// Description': 'Uses PullToRefresh and PullToLoadMore plugin to load more data',
                 //disableMouse    : false,
-                pullToRefresh   : true,
-                onPullToRefresh : ptr,
-                pullToLoadMore  : true,
-                onPullToLoadMore: ptr,
+                //pullToRefresh   : true,
+                //onPullToRefresh : ptr,
+                //pullToLoadMore  : true,
+                //onPullToLoadMore: ptr,
                 //useNativeScroller: true,
                 //gpuOptimization: true,
+                //useCSSTransition: true,
+                infiniteLoading : true,
+                //gpuOptimization : false,
                 useCSSTransition: true,
+                plugins: ['InfiniteLoading'],
+                infiniteLoadingConfig: {
+                    dataProvider : ptr,
+                    threshold: 2000
+                }
                 
                 // 
             };

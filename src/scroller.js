@@ -498,15 +498,16 @@
         * @method _setWrapperSize
         * @private
         */
-        _setSize: function () {
+        _setSize: function (contentOnly) {
             var scrollerDOM = this.scroller,
                 // We need to take into account if the `PullToLoadMore` plugin is active
                 // and in that case substract the height from the scrollable area size
                 ptl         = this.opts.pullToLoadMore;
 
-            this._setWrapperSize();
-            this._sizePullToShowMore();
-
+            if (!contentOnly) {
+                this._setWrapperSize();
+                this._sizePullToShowMore();
+            }
             // Once all the sizes are accurate, performn the scroll size calculations
             this.scrollerWidth  = scrollerDOM.offsetWidth;
             this.scrollerHeight = ptl ? scrollerDOM.offsetHeight - this.getPTLSize() : scrollerDOM.offsetHeight;
@@ -1172,6 +1173,7 @@
             this._update();
             this._rafWheel    = false;
             this._isScrolling = false;
+            this._fire(ACTION_SCROLL_MOVE, ACTION_ANIM_MOVING, this.x, this.y);
         },
 
         /* 

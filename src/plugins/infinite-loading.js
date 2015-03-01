@@ -23,7 +23,7 @@
 
         CONFIG_DEFAULTS = {
             labelNoData : 'No more data to display',
-            threshold   : null
+            threshold   : 300
         },
         CLASS_FETCHING = 'loading';
     
@@ -69,7 +69,7 @@
             }
         },
         _infiniteLoadingTriggerCallback: function (err, payload) {
-            if (!err) {
+            if (!err && payload) {
                 // the payload returns an array, append it.
                 if (payload instanceof Array && payload.length) {
                     Logger.log('Data fetched!');
@@ -108,26 +108,35 @@
                 return;
             }
 
-            var config = this.opts.infiniteLoadingConfig,
-                delta, threshold, pos, size;
+            var config = this.opts.infiniteLoadingConfig, 
+                pos, size, wrapper;
 
             x || (x = this.x);
             y || (y = this.y);
 
             if (this.scrollVertical) {
-                pos  = y;
-                size = this.scrollerWidth;
+                pos     = y;
+                size    = this.scrollerHeight;
+                wrapper = this.wrapperHeight;
             } else {
-                pos  = x;
-                size = this.scrollerHeight;
+                pos     = x;
+                size    = this.scrollerWidth;
+                wrapper = this.wrapperWidth;
             }
 
+            var scrollable = size - wrapper; // Total scrollable pixels
+            var left = scrollable + pos; // Remaining px to scroll
 
+            // Make sure that the provided thershold is never bigger
+            // than the scrollable pixels to avoid extra provider calls
+            var threshold = config.threshold < scrollable ? config.threshold : wrapper;
 
-            threshold = config.threshold || 3 * size;
-            delta     = size + pos; // pos is negative
+            Logger.log('left: ', left, 'tr: ', threshold);
 
-            if (delta < threshold) {
+            // If we have pixels to scroll 
+            // and less than the threshold trigger provider.
+            if (left >= 0 && left < threshold) {
+                Logger.log('triggerDataProvider');
                 this._triggerInfiniteLoadingDataProvider();
             }
         },
