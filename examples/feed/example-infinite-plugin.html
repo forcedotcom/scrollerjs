@@ -47,7 +47,10 @@
         .mam {
             margin-top: 14px;
         }
-
+        .infinite-loading {
+            height: 40px;
+            text-align: center;
+        }
 
         </style>
 
@@ -568,8 +571,7 @@
                 useCSSTransition: true,
                 plugins: ['InfiniteLoading'],
                 infiniteLoadingConfig: {
-                    dataProvider : ptr,
-                    threshold: 2000
+                    dataProvider : ptr
                 }
                 
                 // 

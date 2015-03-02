@@ -22,17 +22,20 @@
         Logger   = SCROLLER.Logger,
 
         CONFIG_DEFAULTS = {
-            labelNoData : 'No more data to display',
-            threshold   : 300
+            labelNoData  : 'No more data to display',
+            labelIdle    : '',
+            labelLoading : 'Loading more...',
+            threshold    : 0
         },
-        CLASS_FETCHING = 'loading';
+        CLASS_LOADING = 'loading',
+        CLASS_IDLE    = 'il';
     
     function InfiniteLoading () {}
 
     InfiniteLoading.prototype = {
         init: function () {
             this._mergeInfiniteLoading();
-            this.on('_initialize', this._initInfiniteLoading);
+            this.on('_initialize', this._initializeInfiniteLoading);
         },
         _mergeInfiniteLoading: function () {
             this.opts.infiniteLoadingConfig = this._mergeConfigOptions(
@@ -40,7 +43,17 @@
                 this.opts.infiniteLoadingConfig
             );
         },
-        _initInfiniteLoading: function () {
+        _createInfiniteLoadingMarkup: function () {
+            var self         = this,
+                il_container = w.document.createElement('div'),
+                idleLabel    = this.opts.infiniteLoadingConfig.labelIdle;
+
+            il_container.innerHTML = '<span class="' + CLASS_IDLE + '">' + idleLabel + '</span>';
+            il_container.className = 'infinite-loading';
+
+            return il_container;
+        },
+        _initializeInfiniteLoading: function () {
             var ilConfig       = this.opts.infiniteLoadingConfig,
                 thresholdCheck = this.opts.gpuOptimization ? this._checkItemsthreshold : this._checkLoadingThreshold;
 
@@ -52,6 +65,42 @@
             this.on('scrollMove', thresholdCheck);
             this.on('scrollEnd',  thresholdCheck);
             this._itemsThreshold = this.items && this.items.length || 10;
+
+            this._appendInfiniteLoading();
+            this._setSize();
+        },
+        _appendInfiniteLoading: function () {
+            var il_container = this._createInfiniteLoadingMarkup(),
+                target       = this.scroller;
+
+            target.appendChild(il_container);
+
+            this.ilDOM   = il_container;
+            this.ilLabel = il_container.firstChild;
+            this._ilSize = il_container.offsetHeight; //relayout
+        },
+        _setState: function (loading) {
+            if (loading) {
+                this.ilDOM.classList.add(CLASS_LOADING);
+                this.ilLabel.textContent = this.opts.infiniteLoadingConfig.labelLoading;
+            } else {
+                this.ilDOM.classList.remove(CLASS_LOADING);
+                this.ilLabel.textContent = this.opts.infiniteLoadingConfig.labelIdle;
+            }
+        },
+        _appendData: function (items) {
+            var docfrag = w.document.createDocumentFragment(),
+                scrollerContainer = this.scroller,
+                container = this.ilDOM;
+
+            items.forEach(function (i) {
+                docfrag.appendChild(i);
+            });
+
+            scrollerContainer.insertBefore(docfrag, container);
+        },
+        _getCustomAppendedElements: function () {
+            return 2;
         },
         _triggerInfiniteLoadingDataProvider: function () {
             var self            = this,
@@ -63,6 +112,7 @@
             if (ilDataProvider) {
                 Logger.log('fetching data');
                 this._ilFetchingData = true;
+                this._setState(true/*loading*/);
                 ilDataProvider(callback);
             } else {
                 this._infiniteLoadingTriggerCallback('noop');
@@ -86,6 +136,7 @@
                     Logger.log('No More data!');
                 }
             }
+            this._setState(false/*loading*/);
             this._ilFetchingData = false;
         },
         // This check is done when surfaceManager is enabled
@@ -129,13 +180,13 @@
 
             // Make sure that the provided thershold is never bigger
             // than the scrollable pixels to avoid extra provider calls
-            var threshold = config.threshold < scrollable ? config.threshold : wrapper;
+            var threshold = config.threshold < scrollable ? config.threshold : 0;
 
             Logger.log('left: ', left, 'tr: ', threshold);
 
             // If we have pixels to scroll 
             // and less than the threshold trigger provider.
-            if (left >= 0 && left < threshold) {
+            if (left >= 0 && left <= threshold) {
                 Logger.log('triggerDataProvider');
                 this._triggerInfiniteLoadingDataProvider();
             }

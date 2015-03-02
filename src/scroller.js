@@ -546,6 +546,17 @@
         },
 
         /**
+        * To be overriden by plugins.
+        * Gets the numbers of DOM elements appended inside the scroller
+        *
+        * @method _getCustomAppendedElements
+        * @private
+        */
+        _getCustomAppendedElements: function () {
+            return 0;
+        },
+
+        /**
         * Private destroy function that is responsible for the destruction of the
         * instance itself. 
         * The plugins destroy themselves, as triggered by the public
