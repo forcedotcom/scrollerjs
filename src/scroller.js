@@ -1581,10 +1581,6 @@
         _scrollTo: function (x, y, time, easing) {
             easing || (easing = EASING.regular);
 
-            // if (this.opts.useNativeScroller) {
-            //     return this._wrapperScrollTo(x,y, time, easing.fn);
-            // }
-
             if (!time || this.opts.useCSSTransition) {
                 this._transitionEasing(easing.style);
                 this._transitionTime(time);
@@ -1641,8 +1637,8 @@
          * TODO: Integrate with open source scroller in 196
          */
         _wrapperScrollTo: function(x, y) {
-               this.scroller.scrollTop = this.scrollVertical ? Math.abs(y) : this.scroller.scrollTop;
-               this.scroller.scrollLeft = this.scrollVertical ? this.scroller.scrollLeft : Math.abs(x);
+           this.wrapper.scrollTop = this.scrollVertical ? Math.abs(y) : this.wrapper.scrollTop;
+           this.wrapper.scrollLeft = this.scrollVertical ? this.wrapper.scrollLeft : Math.abs(x);
         },
 
         /**
