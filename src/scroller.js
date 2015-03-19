@@ -580,7 +580,7 @@
         * We can't prevent default because that will break the scrolling itself,
         * so we just detect on touchStart if is on 0 and we set it to 1
         *
-        * @params event {TouchEvent} DOM Event
+        * @param event {TouchEvent} DOM Event
         * @method _iosScrollFixture
         * @private
         */
@@ -592,7 +592,7 @@
         /**
         * Add or remove all of the neccesary event listeners, based on the provided configuration.
         *
-        * @params action {string} Action to bind or unbind events
+        * @param action {string} Action to bind or unbind events
         * @method _handleEvents
         * @private
         */
@@ -671,8 +671,8 @@
         * The first argument is the event type and any additional arguments are passed to the listeners as parameters.
         * This is used to notify the plugins of events that occur on the scroller.
         *
-        * @params eventType {string} Type of event to be dispatched
-        * @params arguments {object} An arbitrary set of parameters to pass to the listeners
+        * @param eventType {string} Type of event to be dispatched
+        * @param arguments {object} An arbitrary set of parameters to pass to the listeners
         * @method _fire
         * @private
         */
@@ -694,9 +694,9 @@
         * Hook mechanism that allows plugins to run functions before or after 
         * the execution of a particular scroller function.
         *
-        * @params when {string} When to execute the hooked function (before|after)
-        * @params method {string} Where to perform the hook
-        * @params method {function} Hook function to execute
+        * @param when {string} When to execute the hooked function (before|after)
+        * @param method {string} Where to perform the hook
+        * @param method {function} Hook function to execute
         * @method _hook
         * @private
         */
@@ -723,7 +723,7 @@
         * The browser calls this function if any of the events 
         * registered in _handleEvents are triggered.
         *
-        * @params e {event} The event provided by the browser
+        * @param e {event} The event provided by the browser
         * @method handleEvent
         * @private
         */
@@ -777,7 +777,7 @@
         /**
         * Handles the start gesture event.
         *
-        * @params e {event} The gesturestart event provided by the browser
+        * @param e {event} The gesturestart event provided by the browser
         * @method handleEvent
         * @private
         */
@@ -823,7 +823,7 @@
         * By default, it will `preventDefault()` the start event so if a link is clicked, 
         * it won't trigger browser navigation.
         *
-        * @params e {event} The gesturemove event provided by the browser
+        * @param e {event} The gesturemove event provided by the browser
         * @method _onStopScrolling
         * @protected
         */
@@ -837,7 +837,7 @@
         * then it applies an exponential moving average filter to weight and smooth out the final velocity.
         * 
         *
-        * @params e {event} The gesturemove event provided by the browser
+        * @param e {event} The gesturemove event provided by the browser
         * @method _trackVelocity
         * @protected
         */
@@ -926,8 +926,8 @@
         * Get the scroll direction once the gesture is bigger than a 
         * given threshold (via the `minDirectionThrehold` option).
         *
-        * @params absX {integer} Absolute value of the x coordinate
-        * @params absY {integer} Absolute value of the y coordinate
+        * @param absX {integer} Absolute value of the x coordinate
+        * @param absY {integer} Absolute value of the y coordinate
         * @method _getScrollDirection
         * @protected
         */
@@ -949,8 +949,8 @@
         /**
         * Checks the current position. 
         *
-        * @params absX {integer} Current x coordinate
-        * @params absY {integer} Current y coordinate
+        * @param absX {integer} Current x coordinate
+        * @param absY {integer} Current y coordinate
         * @method _isOutOfScroll
         * @private
         */
@@ -962,8 +962,8 @@
         * Normalizes and sets the coordinate that is not being scrolled 
         * to 0 so it moves in one direction only.
         *
-        * @params absX {integer} Current x coordinate
-        * @params absY {integer} Current y coordinate
+        * @param absX {integer} Current x coordinate
+        * @param absY {integer} Current y coordinate
         * @method _setNormalizedXY
         * @private
         */
@@ -980,7 +980,7 @@
         /**
         * Handles move gesture event.
         *
-        * @params e {event} The gesturemove event provided by the browser
+        * @param e {event} The gesturemove event provided by the browser
         * @method _move
         * @private
         */
@@ -1056,7 +1056,7 @@
         /**
         * Handles end gesture event.
         *
-        * @params e {event} The gesturemove event provided by the browser
+        * @param e {event} The gesturemove event provided by the browser
         * @method _end
         * @private
         */
@@ -1104,7 +1104,7 @@
         /**
         * Handles the wheel event for scrolling.
         *
-        * @params e {event} The wheel event provided by the browser
+        * @param e {event} The wheel event provided by the browser
         * @method _wheel
         * @private
         */
@@ -1176,7 +1176,7 @@
         /**
         * Handles the debounce of the wheel event to decouple the event and the actual DOM update.
         *
-        * @params e {event} The wheel event provided by the browser
+        * @param e {event} The wheel event provided by the browser
         * @method _wheelRAF
         * @private
         */
@@ -1200,9 +1200,9 @@
         * If `debounce:true`, the velocity has been already calculated through `_trackVelocity`.
         * Otherwise, the value is determined from the current state of the scroller.
         *
-        * @params current {float} Current position of the scroller
-        * @params start {float} Start position of the scroller when the gesture started
-        * @params time  {integer Duration of the gesture
+        * @param current {float} Current position of the scroller
+        * @param start {float} Start position of the scroller when the gesture started
+        * @param time  {integer Duration of the gesture
         * @method _getVelocity
         * @return {float} Velocity of the gesture
         * @protected
@@ -1220,8 +1220,8 @@
         * Calculates the momentum {destination, time} based on the velocity of the gesture and on the
         * acceleration.
         *
-        * @params velocity {float} Velocity of the gesture
-        * @params current {float} Current scroller position
+        * @param velocity {float} Velocity of the gesture
+        * @param current {float} Current scroller position
         * @method _computeMomentum
         * @return {Object} An object with the destination and time where the scroller should go.
         * @protected
@@ -1246,10 +1246,10 @@
         * The mathematical function to get the destination is a simple ponderation 
         * of how much px to snap based on the current position and velocity.
         *
-        * @params start {float} Minimum or maximum scrollable position
-        * @params end {float} Wrapper size (how big the scroller wrapper is)
-        * @params velocity {float} Current gesture velocity
-        * @params current {float} Current scroller position
+        * @param start {float} Minimum or maximum scrollable position
+        * @param end {float} Wrapper size (how big the scroller wrapper is)
+        * @param velocity {float} Current gesture velocity
+        * @param current {float} Current scroller position
         * @method _computeSnap
         * @return {Object} An object with the destination and time where the scroller should snap to.
         * @protected
@@ -1266,11 +1266,11 @@
         * Calculates the momentum for the current gesture.
         * If the destination of the momentum falls outside of the scrollable region,
         * it calculate the snapping point and the new momentum related to it.
-        * @params current {float} Current scroller position
-        * @params start {float} Start scroller position
-        * @params duration {float} Time of the gesture
-        * @params lowerMargin {integer} Maximum/minimum scrollable position
-        * @params wrapperSize {integer} Size of the scroller wrapper
+        * @param current {float} Current scroller position
+        * @param start {float} Start scroller position
+        * @param duration {float} Time of the gesture
+        * @param lowerMargin {integer} Maximum/minimum scrollable position
+        * @param wrapperSize {integer} Size of the scroller wrapper
         * @method _momentum
         * @return {Object} An object with the destination and time where the scroller should scroll to.
         * @protected
@@ -1345,7 +1345,7 @@
         * outside the boundaries.
         * Used to decouple `pullToRefresh` and `pullToLoadMore`
         * functionality as much as possible.
-        * @params time {integer} Default time for the scroll in case a snap is needed
+        * @param time {integer} Default time for the scroll in case a snap is needed
         * @method _resetPosition
         * @protected
         */
@@ -1401,7 +1401,7 @@
         /**
         * Sets the transition easing function property into the scroller node.
         * 
-        * @params easing {integer} String representation of the CSS easing function
+        * @param easing {integer} String representation of the CSS easing function
         * @method _transitionEasing
         * @private
         */
@@ -1412,7 +1412,7 @@
         /**
         * Sets the transition time property into the scroller node.
         * 
-        * @params time {integer} Time or duration of the transition
+        * @param time {integer} Time or duration of the transition
         * @method _transitionTime
         * @private
         */
@@ -1425,8 +1425,8 @@
         * We use matrix3d to force GPU acceleration and to allow plugins to easily
         * manipulate the matrix later on.
         * 
-        * @params x {integer} Position for x coordinate 
-        * @params y {integer} Position for y coordinate 
+        * @param x {integer} Position for x coordinate 
+        * @param y {integer} Position for y coordinate 
         * @method _translate
         * @protected
         */
@@ -1447,7 +1447,7 @@
         * Handler invoked by the transitionEnd event when the scroller reached an end
         * (this is used when `cssTransition:true`).
         * 
-        * @params e {event} The transitionEnd event provided by the browser
+        * @param e {event} The transitionEnd event provided by the browser
         * @method _transitionEnd
         * @protected
         */
@@ -1469,10 +1469,10 @@
         * By default the scroller uses `CubicBezier` function curves with the parameters
         * defined in the EASING static variables.
         *
-            * @params x {float} The x-position to scroll to
-            * @params y {float} The y-position to scroll to
-            * @params duration {float} The duration of the animation
-            * @params easingFn {function} A function that images x values within [0,1] range
+            * @param x {float} The x-position to scroll to
+            * @param y {float} The y-position to scroll to
+            * @param duration {float} The duration of the animation
+            * @param easingFn {function} A function that images x values within [0,1] range
         * @method _animate
             * @private
         */
@@ -1528,7 +1528,7 @@
         /**
         * Prepend an Array of elements into the scroller.
         * This function is overriden by SurfaceManager to allow a custom DOM manipulation.
-        * @params items {HTMLElement[]} Array of items to insert in the scroller
+        * @param items {HTMLElement[]} Array of items to insert in the scroller
         * @method _prependData
         * @protected
         */
@@ -1551,7 +1551,7 @@
         /**
         * Append an Array of elements into the scroller.
         * This function is overriden by SurfaceManager to allow a custom DOM manipulation.
-        * @params items {HTMLElement[]} Array of items to insert in the scroller
+        * @param items {HTMLElement[]} Array of items to insert in the scroller
         * @method _appendData
         * @protected
         */
@@ -1571,10 +1571,10 @@
         * Otherwise, an animation that interpolates
         * positions using `requestAnimationFrame` is triggered.
         *
-        * @params x {float} The x-position to scroll to
-        * @params y {float} The x-position to scroll to
-        * @params time {float} Duration of the animation
-        * @params easingFn {function} An easing function (if not provided, regular CubicBezier is used)
+        * @param x {float} The x-position to scroll to
+        * @param y {float} The x-position to scroll to
+        * @param time {float} Duration of the animation
+        * @param easingFn {function} An easing function (if not provided, regular CubicBezier is used)
         * @method _scrollTo
         * @private
         */
@@ -1629,8 +1629,8 @@
         /**
          * Scroll to a {x,y} position using the wrapper's scrollTop and scrollLeft attributes.
          *
-         * @params x {float} The x-position to scroll to
-         * @params y {float} The y-position to scroll to
+         * @param x {float} The x-position to scroll to
+         * @param y {float} The y-position to scroll to
          * @method _wrapperScrollTo
          * @private
          *
@@ -1644,9 +1644,9 @@
         /**
         * Prepend an Array of elements into the scroller.
         * This function is overriden by SurfaceManager to allow a custom DOM manipulation.
-        * @params eventType {string} Event name
-        * @params fn {function} The callback to execute in response to the event
-        * @params [context] {object} Override `this` object in callback
+        * @param eventType {string} Event name
+        * @param fn {function} The callback to execute in response to the event
+        * @param [context] {object} Override `this` object in callback
         * @method on
         * @public
         */
@@ -1700,7 +1700,7 @@
         *
         * If an `init` method is provided, the scroller automatically calls it to
         * let the plugin initialize, attach custom events, and set the right state.
-        * @params plugin {Function | Object} Plugin to inject into the scroller
+        * @param plugin {Function | Object} Plugin to inject into the scroller
         * @method plug
         * @public
         *
@@ -1741,10 +1741,10 @@
         /**
         * Scroll to a {x,y} position given a specific time and easing function.
         *
-        * @params x {float} The x-position to scroll to
-        * @params y {float} The y-position to scroll to
-        * @params [time] {float} ms of the scroll animation
-        * @params [easingFn] {function} An easing equation if time is set (default is the `easing` attribute)
+        * @param x {float} The x-position to scroll to
+        * @param y {float} The y-position to scroll to
+        * @param [time] {float} ms of the scroll animation
+        * @param [easingFn] {function} An easing equation if time is set (default is the `easing` attribute)
         * @method scrollTo
         * @public
         */
@@ -1764,8 +1764,8 @@
         /**
         * Scroll to the top of the scroller.
         *
-        * @params [time] {float} ms of the scroll animation
-        * @params [easingFn] {function} An easing equation if time is set (default is the `easing` attribute)
+        * @param [time] {float} ms of the scroll animation
+        * @param [easingFn] {function} An easing equation if time is set (default is the `easing` attribute)
         * @method scrollToTop
         * @public
         */
@@ -1776,8 +1776,8 @@
         /**
         * Scroll to the bottom of the scroller.
         *
-        * @params [time] {float} ms of the scroll animation
-        * @params [easingFn] {function} An easing equation if time is set (default is the `easing` attribute)
+        * @param [time] {float} ms of the scroll animation
+        * @param [easingFn] {function} An easing equation if time is set (default is the `easing` attribute)
         * @method scrollToBottom
         * @public
         */
@@ -1799,7 +1799,7 @@
         * instead of manually adding it to the DOM directly,
         * because the scroller will be able to optimize the rendering lifecycle depending on the configuration.
         *
-        * @params data {HTMLElement | HTMLElement[] | String} Elements to prepend into the scroller
+        * @param data {HTMLElement | HTMLElement[] | String} Elements to prepend into the scroller
         * @method prependItems
         * @public
         */
@@ -1817,7 +1817,7 @@
         * instead of manually adding it to the DOM directly,
         * because the scroller will be able to optimize the rendering lifecycle depending on the configuration.
         *
-        * @params data {HTMLElement | HTMLElement[] | String} Elements to append into the scroller
+        * @param data {HTMLElement | HTMLElement[] | String} Elements to append into the scroller
         * @method appendItems
         * @public
         */
