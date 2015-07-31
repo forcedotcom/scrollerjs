@@ -1167,6 +1167,7 @@
             if (!this._rafWheel) {
                 this._rafWheel = RAF(function (t) {
                     self._isScrolling = true;
+                    self._getScrollDirection(wheelDeltaX, wheelDeltaY);
                     self.distY = wheelDeltaY;
                     self.distX = wheelDeltaX;
                     self._wheelRAF(); // Debounce event from animation
