@@ -1,7 +1,7 @@
 {
-  "name": "Scroller",
+  "name": "scrollerjs",
   "description": "ScrollerJS",
-  "version": "0.0.1",
+  "version": "1.0.2",
   "homepage": "http://scrollerjs.com",
   "author": "Diego Ferreiro <elfogris@gmail.com>",
   "contributors": [
@@ -36,5 +36,8 @@
   "bugs": {
     "url": "https://github.com/forcedotcom/scrollerjs/issues"
   },
-  "license": "Apache2.0"
+  "license": "Apache2.0",
+  "scripts": {
+    "prepublish": "grunt build"
+  }
 }
