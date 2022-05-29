@@ -16,7 +16,7 @@
 (function (w) {
     'use strict';
     w || (w = window);
-    
+
     // NAMESPACES
     var SCROLLER = w.__S || (w.__S = {}),
         RAF      = w.requestAnimationFrame,
@@ -49,7 +49,7 @@
         CLASS_LABEL        = 'label',
         CLASS_SUBTITLE     = 'sub',
         CLASS_PTR          = 'pullToRefresh';
-    
+
     function PullToRefresh() {}
 
     PullToRefresh.DEFAULTS = CONFIG_DEFAULTS;
@@ -147,7 +147,7 @@
                 this._iosTouching = false;
                 this._end(e);
             }.bind(this));
-            
+
         },
         //TODO: FIX clicking for PTR
         _appendPullToRefresh: function () {
@@ -246,10 +246,10 @@
                 return this._needsPullToRefresh(y);
             }
 
-            if (isPTRNative) { 
+            if (isPTRNative) {
                 if (y > -this._ptrSize) {
                     this.ptrDOM.style[STYLES.transform] = 'translate3d(0,' + (50 + y) + 'px,0)';
-                }   
+                }
             }
         },
         _onScrollEndPTR: function (e) {
@@ -291,7 +291,7 @@
                 };
 
             if (ptrDataProvider) {
-                ptrDataProvider(callback);
+                ptrDataProvider(callback, self);
             } else {
                 w.setTimeout(function (){
                     self._ptrExecTriggerCallback('handler not defined');
@@ -316,7 +316,7 @@
                     self._resetPosition(self._ptrSnapTime);
                 });
             }
-            
+
         },
         /*
         * ==================================

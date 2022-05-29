@@ -38,7 +38,7 @@
             labelSubtitle : '',
             labelError    : 'Error on pull to load more'
         },
-        
+
         PULL_TO_SNAP_TIME  = 200,
         ERROR_TIMEOUT      = 1000,
         CLASS_UPDATE_STATE = 'update',
@@ -48,7 +48,7 @@
         CLASS_LABEL        = 'label',
         CLASS_SUBTITLE     = 'sub',
         CLASS_PTL          = 'pullToLoadMore';
-    
+
     function PullToLoadMore() {}
 
     PullToLoadMore.prototype = {
@@ -76,7 +76,7 @@
             }
             this.opts.pullToLoadMoreConfig = ptlConfig;
         },
-        
+
         triggerPTL: function () {
             //set waiting state
             if (!this._ptlLoading) {
@@ -242,7 +242,7 @@
                 };
 
             if (ptrDataProvider) {
-                ptrDataProvider(callback);
+                ptrDataProvider(callback, self);
             } else {
                 w.setTimeout(function (){
                     self._ptlExecTriggerCallback('no fnc');
